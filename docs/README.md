@@ -14,9 +14,9 @@ title: Project Template
 ---
 
 ## Team
--  eNumber, Name, [email](mailto:name@email.com)
--  eNumber, Name, [email](mailto:name@email.com)
--  eNumber, Name, [email](mailto:name@email.com)
+-  E/18/028, Jeewanth Udeshika, [email](mailto:e18028@eng.pdn.ac.lk)
+-  E/18/173, Ishan Kasthuripitiya, [email](mailto:e18173@eng.pdn.ac.lk)
+-  E/18/285,Tharindu Ranasinghe, [email](mailto:e18285@eng.pdn.ac.lk)
 
 <!-- Image (photo/drawing of the final hardware) should be here -->
 
