@@ -54,9 +54,11 @@ Testing done on hardware and software, detailed + summarized results
 
 All items and costs
 
-| Item          | Quantity  | Unit Cost  | Total  |
-| ------------- |:---------:|:----------:|-------:|
-| Sample item   | 5         | 10 LKR     | 50 LKR |
+![Detailed Budget](https://user-images.githubusercontent.com/73770142/198895815-43f787f6-64ac-4216-8031-58d2aaf87af7.png)
+
+<!--| Item          | Quantity  | Unit Cost  | Total  | -->
+<!--| ------------- |:---------:|:----------:|-------:| -->
+<!--| Sample item   | 5         | 10 LKR     | 50 LKR | -->
 
 ## Conclusion
 
