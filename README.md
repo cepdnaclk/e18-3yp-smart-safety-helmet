@@ -1,5 +1,5 @@
 ___
-# Smart Helmet for Large Scale Coonstruction Sites
+# Smart Helmet for Large Scale Construction Sites
 ___
 
 ## Problem
