@@ -1,0 +1,30 @@
+{
+    "team": [
+        {
+            "name": "Jeewanth Udeshika",
+            "email": "e18028@eng.pdn.ac.lk",
+            "eNumber": "E/18/028"
+        },
+        {
+            "name": "Ishan Kasthuripitiya",
+            "email": "e18173@eng.pdn.ac.lk",
+            "eNumber": "E/18/173"
+        },
+        {
+            "name": "Tharindu Ranasinghe",
+            "email": "e18285@eng.pdn.ac.lk",
+            "eNumber": "E/18/285"
+        }
+    ],
+    "supervisors": [
+        {
+            "name": "Dr. Isuru Nawinne",
+            "email": "isurunawinne@eng.pdn.ac.lk"
+        },
+        {
+            "name": "Dr. Mahanama Wickramasinghe",
+            "email": "mahanamaw@eng.pdn.ac.lk"
+        }
+    ],
+    "tags": ["Web", "Embedded Systems"]
+}
