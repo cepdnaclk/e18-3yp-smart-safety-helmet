@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "594702403369",
+    "project_id": "smart-safety-3yp",
+    "storage_bucket": "smart-safety-3yp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594702403369:android:e0b758380500cbab3b5938",
+        "android_client_info": {
+          "package_name": "com.example.smart_safety"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "594702403369-ne1pidelhhtkegovk4678bhr7kviuecq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQQiSY79dxf1SI1gTNOpbpFewwRqgD2P0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "594702403369-ne1pidelhhtkegovk4678bhr7kviuecq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
