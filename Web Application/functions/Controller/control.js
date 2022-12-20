@@ -31,3 +31,14 @@ export const addUser = async (req, res) => {
         res.send(err);
     }
 }
+
+// function to check real time updates of database
+const doc = userDB.doc('Jeewantha');
+
+const observer = doc.onSnapshot(docSnapshot => {
+  console.log(`Received doc snapshot: ${docSnapshot}`);
+  return docSnapshot.email;
+  // ...
+}, err => {
+  console.log(`Encountered error: ${err}`);
+});
