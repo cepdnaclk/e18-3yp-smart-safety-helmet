@@ -4,7 +4,7 @@ import { addUser, getUser } from '../Controller/control.js';
 const router = express.Router();
 
 router.get("/", (req, res)=>{
-    res.send({message: "Hi Bosa"});
+    res.send({message: "Hi User"});
 });
 
 router.get('/user', getUser);
