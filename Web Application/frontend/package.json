@@ -1,0 +1,48 @@
+{
+  "name": "material-kit-react",
+  "author": "Devias IO",
+  "licence": "MIT",
+  "version": "2.1.1",
+  "private": false,
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export",
+    "lint": "next lint",
+    "lint-fix": "next lint --fix"
+  },
+  "dependencies": {
+    "@emotion/cache": "11.10.3",
+    "@emotion/react": "11.10.4",
+    "@emotion/server": "11.10.0",
+    "@emotion/styled": "11.10.4",
+    "@googlemaps/react-wrapper": "^1.1.35",
+    "@mui/icons-material": "5.10.3",
+    "@mui/lab": "5.0.0-alpha.99",
+    "@mui/material": "5.10.5",
+    "@mui/system": "5.10.5",
+    "@mui/x-date-pickers": "5.0.1",
+    "@react-google-maps/api": "^2.17.1",
+    "@zalter/identity-js": "1.2.1",
+    "axios": "^1.2.1",
+    "chart.js": "3.9.1",
+    "date-fns": "2.29.3",
+    "dotenv": "^16.0.3",
+    "formik": "2.2.9",
+    "google-map-react": "^2.2.0",
+    "next": "^12.3.0",
+    "nprogress": "0.2.0",
+    "prop-types": "15.8.1",
+    "react": "18.2.0",
+    "react-chartjs-2": "4.3.1",
+    "react-dom": "18.2.0",
+    "react-perfect-scrollbar": "1.5.8",
+    "uuid": "9.0.0",
+    "yup": "0.32.11"
+  },
+  "devDependencies": {
+    "eslint": "8.23.1",
+    "eslint-config-next": "12.3.0"
+  }
+}
