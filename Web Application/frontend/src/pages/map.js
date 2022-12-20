@@ -71,8 +71,10 @@ function Map() {
   };
 
   const { isLoaded } = useJsApiLoader({
-    mapId: process.env.MAP_ID,
-    googleMapsApiKey: process.env.MAPS_API_KEY, // Add your API key
+    // mapId: process.env.MAP_ID,
+    // googleMapsApiKey: process.env.MAPS_API_KEY, // Add your API key
+    mapId: "728e8bcdc7d02a3e",
+    googleMapsApiKey: "AIzaSyACvQ9R_hLNd41f-y3fdqWk-ph_-d5g44U", // Add your API key
   });
 
   return isLoaded ? (
