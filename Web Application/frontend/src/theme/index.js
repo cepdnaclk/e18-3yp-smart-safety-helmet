@@ -142,8 +142,8 @@ export const theme = createTheme({
       600: "#4B5563",
       700: "#374151",
       800: "#1F2937",
-      // 900: "#111827",
-      900: "#FFC300", //Light Yellow Color
+      // 900: '#111827',
+      900: "#F5EDBE",
     },
     action: {
       active: "#6B7280",
@@ -156,7 +156,6 @@ export const theme = createTheme({
     background: {
       default: "#F9FAFC",
       paper: "#FFFFFF",
-      // paper: "#FFF9CD",
     },
     divider: "#E6E8F0",
     primary: {
@@ -167,8 +166,7 @@ export const theme = createTheme({
     },
     secondary: {
       // main: "#10B981",
-      main: "#111827",
-      // main: "#FFFFFF",
+      main: "#0455EF",
       light: "#3FC79A",
       dark: "#0B815A",
       contrastText: "#FFFFFF",
