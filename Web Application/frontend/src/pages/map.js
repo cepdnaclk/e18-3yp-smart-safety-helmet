@@ -14,22 +14,22 @@ const markers = [
   {
     id: 1,
     name: "Chicago, Illinois",
-    position: { lat: 41.881832, lng: -87.623177 },
+    position: { lat: 36.265095, lng: -115.236933 },
   },
   {
     id: 2,
     name: "Denver, Colorado",
-    position: { lat: 39.739235, lng: -104.99025 },
+    position: { lat: 36.265052, lng: -115.236364 },
   },
   {
     id: 3,
     name: "Los Angeles, California",
-    position: { lat: 34.052235, lng: -118.243683 },
+    position: { lat: 36.264941, lng: -115.236773 },
   },
   {
     id: 4,
     name: "New York, New York",
-    position: { lat: 40.712776, lng: -74.005974 },
+    position: { lat: 36.265248, lng: -115.237256 },
   },
 ];
 const mapControls = {
@@ -71,8 +71,8 @@ function Map() {
   };
 
   const { isLoaded } = useJsApiLoader({
-    mapId: process.env.MAP_ID,
-    googleMapsApiKey: process.env.MAPS_API_KEY, // Add your API key
+    mapId: "728e8bcdc7d02a3e",
+    googleMapsApiKey: "AIzaSyACvQ9R_hLNd41f-y3fdqWk-ph_-d5g44U", // Add your API key
   });
 
   return isLoaded ? (
@@ -87,7 +87,7 @@ function Map() {
         <Container maxWidth="xl">
           <GoogleMap
             mapContainerStyle={containerStyle}
-            zoom={100}
+            zoom={50}
             options={mapControls}
             onLoad={handleOnLoad}
           >
