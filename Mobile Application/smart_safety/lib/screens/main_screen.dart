@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smart_safety/main.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class MainScreen extends StatefulWidget {
   // Variable to store username
@@ -21,8 +22,8 @@ class _MainScrren extends State<MainScreen> {
   // Create a stopwatch for time measurements
   var stopwatch = Stopwatch();
 
-  // Variables to maintain the screen
-  // String username = widget.username;
+  // Variables to maintain the nocation
+  bool getNotified = false;
 
   // Variables for maintain the bluetooth and connection status
   bool connectionStatus = true;
@@ -439,6 +440,9 @@ class _MainScrren extends State<MainScreen> {
     if (bluetoothStatus) {
       updateState();
     }
+
+    // get notification
+    getNotifications();
   }
 
   // Function to show message which shows that emergency was sent
@@ -494,6 +498,57 @@ class _MainScrren extends State<MainScreen> {
     );
   }
 
+  // Funcion to popup notification
+  Future<void> notifications() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Notification',
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text(
+                  'Emergency is detetced around you !',
+                  style: TextStyle(fontSize: 25),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Icon(
+                  Icons.notification_add_rounded,
+                  color: Colors.yellow,
+                  size: 100,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  getNotified = false; // Set State to emergency pressed
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Function to create notification
   Future sendNotification({required String name}) async {
     // Reference to the notification database
@@ -540,6 +595,27 @@ class _MainScrren extends State<MainScreen> {
 
     // Send data to the Cloud Firestore
     await userDoc.set(jsondata);
+  }
+
+  // Firebase get realtime notification
+  Future getNotifications() async {
+    // Use firebase instance
+    DatabaseReference database = FirebaseDatabase.instance.ref();
+
+    // Set the state of notification
+    final snapshot = await database.child('notified').get();
+    if (snapshot.exists) {
+      // ignore: avoid_print
+      print(snapshot.toString());
+    } else {
+      // ignore: avoid_print
+      print('No data available.');
+    }
+
+    // Call popup notification
+    if (getNotified) {
+      notifications();
+    }
   }
 }
 
