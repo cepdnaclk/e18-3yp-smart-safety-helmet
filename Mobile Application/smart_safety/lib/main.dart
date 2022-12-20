@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_safety/screens/main_screen.dart';
@@ -39,6 +40,9 @@ class SignIn extends StatelessWidget {
           builder: ((context, snapshot) {
             if (snapshot.hasData) {
               return const MainScreen(); // Return to the main screen with logged user
+            }
+            if (snapshot.hasError) {
+              return const ErrorLogin();
             } else {
               return const Login(); // else remain in the login page
             }
@@ -163,5 +167,70 @@ class _Login extends State<Login> {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim());
+  }
+}
+
+// Registered user model
+class RegisteredUser {
+  // Properties of the registered user
+  String id;
+  final String name;
+  final String password;
+
+  // Constructor for creating registered user object
+  RegisteredUser({this.id = '', required this.name, required this.password});
+
+  // Method for gettting user data from cloud firestore
+  static RegisteredUser fromJSON(Map<String, dynamic> json) {
+    return RegisteredUser(name: json['name'], password: json['password']);
+  }
+}
+
+// Widget for show Login error
+class ErrorLogin extends StatelessWidget {
+  //constructor
+  const ErrorLogin({super.key});
+
+  // Return the npotification that shows errror
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text(
+        'Login Error',
+        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+      ),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text(
+              'Check your e-mail and password and try again !',
+              style: TextStyle(fontSize: 25),
+            ),
+            SizedBox(
+              height: 25,
+            ),
+            Icon(
+              Icons.error_outline_rounded,
+              color: Colors.red,
+              size: 100,
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text(
+            'OK',
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 }

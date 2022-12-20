@@ -4,6 +4,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:geolocator/geolocator.dart';
 
 class MainScreen extends StatefulWidget {
   // Constructor
@@ -31,11 +33,15 @@ class _MainScrren extends State<MainScreen> {
   bool emergencyPressed = false;
   bool logoutPressed = false;
 
-  // Variable for stiring temperarture
-  String temperarture = "27";
+  // Variable for stiring temperature
+  String temperature = "27";
   // Variables for Noise and Vibration indicators to show the saftey levels
   String vibrationStatus = "Safe";
   String noiseStatus = "Safe";
+
+  // State for locations
+  var longitude = '';
+  var altitude = '';
 
   // Buliding the UI of the main Screen
   @override
@@ -115,7 +121,7 @@ class _MainScrren extends State<MainScreen> {
                       Icons.brightness_1,
                       color: Colors.red,
                     ),
-                    Text(" Disonnected",
+                    Text(" Disconnected",
                         style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -192,7 +198,7 @@ class _MainScrren extends State<MainScreen> {
                     const Text("  Temperature",
                         style: TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold)),
-                    Text("$temperarture C ",
+                    Text("$temperature C ",
                         style: const TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold))
                   ],
@@ -369,13 +375,34 @@ class _MainScrren extends State<MainScreen> {
   void checkState() {
     Random random = Random();
 
+    // Get the location
+    // Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+
     // Set states (After analysing data recieved from bluetooth module)
     setState(() {
       connectionStatus = !connectionStatus;
-      temperarture = random.nextInt(50).toString();
+      temperature = random.nextInt(50).toString();
       vibrationStatus = vibrationStatus;
       noiseStatus = noiseStatus;
     });
+
+    // Data which is send to the Colud firestore
+    String conState = 'disconnected';
+    String btState = 'disconnected';
+
+    if (connectionStatus) {
+      conState = "connected";
+    }
+    if (bluetoothStatus) {
+      btState = "connected";
+    }
+
+    createData(
+        connectionStatus: conState,
+        bluetoothStatus: btState,
+        noiseStatus: noiseStatus,
+        vibrationStatus: vibrationStatus,
+        temparature: temperature.toString());
 
     //Update State
     if (bluetoothStatus) {
@@ -422,6 +449,11 @@ class _MainScrren extends State<MainScreen> {
                 ),
               ),
               onPressed: () {
+                setState(() {
+                  emergencyPressed = false; // Set State to emergency pressed
+                });
+                sendNotification(
+                    name: username); // Send noptification with username
                 Navigator.of(context).pop();
               },
             ),
@@ -430,4 +462,120 @@ class _MainScrren extends State<MainScreen> {
       },
     );
   }
+
+  // Function to create notification
+  Future sendNotification({required String name}) async {
+    // Reference to the notification database
+    final userDoc =
+        FirebaseFirestore.instance.collection('safety-notification').doc();
+
+    // Create notification object
+    final notification = Notification(name: username);
+
+    // Convert into the JSOn format
+    final json = notification.toJSON();
+
+    // Send to the cloud firestore
+    await userDoc.set(json);
+  }
+
+  // Function to send data to the database
+  Future createData(
+      {required String connectionStatus,
+      required String bluetoothStatus,
+      required String noiseStatus,
+      required String vibrationStatus,
+      required String temparature}) async {
+    // Referenec to the collection (AppData)
+    final userDoc = FirebaseFirestore.instance.collection('appdata').doc();
+
+    // Create data object
+    final data = UserData(
+        id: userDoc.id,
+        connectionStatus: connectionStatus,
+        bluetoothStatus: bluetoothStatus,
+        noiseStatus: noiseStatus,
+        vibrationStatus: vibrationStatus,
+        temparature: temparature,
+        longitude: longitude,
+        altitude: altitude);
+
+    // Create JSON object
+    final jsondata = data.toJSON();
+
+    // Send data to the Cloud Firestore
+    await userDoc.set(jsondata);
+  }
+
+//   // Get name from firebase cloud firestore
+//   Stream<List<User>> readUser() => FirebaseFirestore.instance
+//       .collection('users')
+//       .snapshots()
+//       .map((snapshot) =>
+//           snapshot.docs.map((doc) => User.fromJSON(doc.data())).toList());
+}
+
+// // Model for getting user
+// class User {
+//   // Variable for storing name and id of the user
+//   String id;
+//   final String name;
+
+//   // Constructor for storing Id and name of the user
+//   User({this.id = '', required this.name});
+
+//   static User fromJSON(Map<String, dynamic> json) =>
+//       User(name: json['name'], id: json['id']);
+// }
+
+// Model for Sending user Data to server
+class UserData {
+  final String id;
+  final String connectionStatus;
+  final String bluetoothStatus;
+  final String noiseStatus;
+  final String vibrationStatus;
+  final String temparature;
+  final String longitude;
+  final String altitude;
+  final DateTime date = DateTime.now();
+
+  // Constructor to the model
+  UserData(
+      {required this.id,
+      required this.connectionStatus,
+      required this.bluetoothStatus,
+      required this.noiseStatus,
+      required this.vibrationStatus,
+      required this.temparature,
+      required this.longitude,
+      required this.altitude});
+
+  // Method to create JSON object
+  Map<String, dynamic> toJSON() => {
+        'id': id,
+        'connectionStatus': connectionStatus,
+        'bluetoothStatus': bluetoothStatus,
+        'noiseStatus': noiseStatus,
+        'vibrationStatus': vibrationStatus,
+        'temparature': temparature,
+        'date': date,
+        'longitude': longitude,
+        'altitude': altitude
+      };
+
+  // Method for Creating data to the JSON format
+}
+
+// Notifications Model
+class Notification {
+  // Variables of the user
+  final String name;
+  final DateTime date = DateTime.now();
+
+  // Constructor of this model
+  Notification({required this.name});
+
+  // Convert object into the JSON format
+  Map<String, dynamic> toJSON() => {'name': name, 'date': date};
 }
