@@ -206,7 +206,7 @@ export const DashboardSidebar = (props) => {
         open
         PaperProps={{
           sx: {
-            backgroundColor: "neutral.500",
+            backgroundColor: "neutral.900",
             color: "#FFFFFF",
             width: 280,
           },
@@ -225,7 +225,7 @@ export const DashboardSidebar = (props) => {
       open={open}
       PaperProps={{
         sx: {
-          backgroundColor: "neutral.500",
+          backgroundColor: "neutral.900",
           color: "#FFFFFF",
           width: 280,
         },
