@@ -13,22 +13,22 @@ const containerStyle = {
 const markers = [
   {
     id: 1,
-    name: "Chicago, Illinois",
+    name: "Jeewantha Udeshika",
     position: { lat: 36.265095, lng: -115.236933 },
   },
   {
     id: 2,
-    name: "Denver, Colorado",
+    name: "Ishan Maduranga",
     position: { lat: 36.265052, lng: -115.236364 },
   },
   {
     id: 3,
-    name: "Los Angeles, California",
+    name: "Tharindu Chamod",
     position: { lat: 36.264941, lng: -115.236773 },
   },
   {
     id: 4,
-    name: "New York, New York",
+    name: "Lakshan Wijekoon",
     position: { lat: 36.265248, lng: -115.237256 },
   },
 ];
@@ -71,6 +71,8 @@ function Map() {
   };
 
   const { isLoaded } = useJsApiLoader({
+    // mapId: process.env.MAP_ID,
+    // googleMapsApiKey: process.env.MAPS_API_KEY, // Add your API key
     mapId: "728e8bcdc7d02a3e",
     googleMapsApiKey: "AIzaSyACvQ9R_hLNd41f-y3fdqWk-ph_-d5g44U", // Add your API key
   });
