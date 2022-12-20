@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      home: const SignIn(),
+      home: const Login(),
     );
   }
 }
@@ -39,7 +39,10 @@ class SignIn extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: ((context, snapshot) {
             if (snapshot.hasData) {
-              return const MainScreen(); // Return to the main screen with logged user
+              return const MainScreen(
+                username: "Tharindu",
+              ); // Return to the main screen with logged user
+
             }
             if (snapshot.hasError) {
               return const ErrorLogin();
@@ -63,6 +66,8 @@ class Login extends StatefulWidget {
 
 // Stateful login Ui
 class _Login extends State<Login> {
+  // State to Keep the username
+  String username = "user-name";
   // Declarer controllers to get passwords and username
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -162,27 +167,38 @@ class _Login extends State<Login> {
     );
   }
 
+  // Function to navigate to the nextscreen
+  void navigationToMain() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MainScreen(username: username)));
+  }
+
   // Authenticating user with firebase
   Future<void> signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim());
-  }
-}
+    final loggedUserResult = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim());
 
-// Registered user model
-class RegisteredUser {
-  // Properties of the registered user
-  String id;
-  final String name;
-  final String password;
+    // Get the logged user id
+    final userID = loggedUserResult.user?.uid;
 
-  // Constructor for creating registered user object
-  RegisteredUser({this.id = '', required this.name, required this.password});
+    // get the document related to the user ID
+    final DocumentSnapshot doc =
+        await FirebaseFirestore.instance.collection('users').doc(userID).get();
 
-  // Method for gettting user data from cloud firestore
-  static RegisteredUser fromJSON(Map<String, dynamic> json) {
-    return RegisteredUser(name: json['name'], password: json['password']);
+    // get the data from the document
+    var userName = doc.get('name');
+
+    // Update the State
+    setState(() {
+      username = userName;
+    });
+
+    // Navigate to the main screen
+    navigationToMain();
   }
 }
 

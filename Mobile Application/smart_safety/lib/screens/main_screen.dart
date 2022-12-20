@@ -5,11 +5,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:geolocator/geolocator.dart';
+import 'package:smart_safety/main.dart';
 
 class MainScreen extends StatefulWidget {
+  // Variable to store username
+  final String username;
   // Constructor
-  const MainScreen({super.key});
+  const MainScreen({super.key, required this.username});
 
   @override
   State<StatefulWidget> createState() => _MainScrren();
@@ -20,7 +22,7 @@ class _MainScrren extends State<MainScreen> {
   var stopwatch = Stopwatch();
 
   // Variables to maintain the screen
-  String username = 'John';
+  // String username = widget.username;
 
   // Variables for maintain the bluetooth and connection status
   bool connectionStatus = true;
@@ -43,6 +45,12 @@ class _MainScrren extends State<MainScreen> {
   var longitude = '';
   var altitude = '';
 
+  // Function t dispose
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   // Buliding the UI of the main Screen
   @override
   Widget build(BuildContext context) {
@@ -59,10 +67,26 @@ class _MainScrren extends State<MainScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Welcome text of the app
-                const Text(
-                  "  Welcome, John!",
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                Row(
+                  children: [
+                    const Text(
+                      "  Hi, ",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                    // Welcome text of the app
+                    Text(
+                      widget.username,
+                      style: const TextStyle(
+                          fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+
+                    const Text(
+                      " !",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    )
+                  ],
                 ),
 
                 // Bluetooth button
@@ -341,24 +365,29 @@ class _MainScrren extends State<MainScreen> {
 
   // Function to update state of the stopwatch
   void calculateTime() {
-    if (stopwatch.isRunning) {
-      updateWorkingTime(); // Callback the updaing function
-    }
-
     setState(() {
       // Setting working time in state
       workingTime =
           '${stopwatch.elapsed.inHours.toString().padLeft(2, "0")}:${(stopwatch.elapsed.inMinutes % 60).toString().padLeft(2, "0")}:${(stopwatch.elapsed.inSeconds % 60).toString().padLeft(2, "0")}';
     });
+
+    if (stopwatch.isRunning) {
+      updateWorkingTime(); // Callback the updaing function
+    }
   }
 
   // Function to perform Logout
   void logout() {
     // Navigation to the next screen
-    // Navigator.pushReplacement(
-    //     context, MaterialPageRoute(builder: (context) => const Login()));
     // Calling firebase signout method
     FirebaseAuth.instance.signOut();
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (context) => const Login()));
+
+    // Replace the page with Login page
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const Login()));
+    // dispose();
   }
 
   // Callback function to update state in every 5 second
@@ -398,10 +427,12 @@ class _MainScrren extends State<MainScreen> {
     }
 
     createData(
+        username: widget.username,
         connectionStatus: conState,
         bluetoothStatus: btState,
         noiseStatus: noiseStatus,
         vibrationStatus: vibrationStatus,
+        workingTime: workingTime,
         temparature: temperature.toString());
 
     //Update State
@@ -453,7 +484,7 @@ class _MainScrren extends State<MainScreen> {
                   emergencyPressed = false; // Set State to emergency pressed
                 });
                 sendNotification(
-                    name: username); // Send noptification with username
+                    name: widget.username); // Send noptification with username
                 Navigator.of(context).pop();
               },
             ),
@@ -470,7 +501,7 @@ class _MainScrren extends State<MainScreen> {
         FirebaseFirestore.instance.collection('safety-notification').doc();
 
     // Create notification object
-    final notification = Notification(name: username);
+    final notification = Notification(name: widget.username);
 
     // Convert into the JSOn format
     final json = notification.toJSON();
@@ -481,22 +512,26 @@ class _MainScrren extends State<MainScreen> {
 
   // Function to send data to the database
   Future createData(
-      {required String connectionStatus,
+      {required String username,
+      required String connectionStatus,
       required String bluetoothStatus,
       required String noiseStatus,
       required String vibrationStatus,
-      required String temparature}) async {
+      required String temparature,
+      required String workingTime}) async {
     // Referenec to the collection (AppData)
     final userDoc = FirebaseFirestore.instance.collection('appdata').doc();
 
     // Create data object
     final data = UserData(
         id: userDoc.id,
+        username: username,
         connectionStatus: connectionStatus,
         bluetoothStatus: bluetoothStatus,
         noiseStatus: noiseStatus,
         vibrationStatus: vibrationStatus,
         temparature: temparature,
+        workingTime: workingTime,
         longitude: longitude,
         altitude: altitude);
 
@@ -506,36 +541,18 @@ class _MainScrren extends State<MainScreen> {
     // Send data to the Cloud Firestore
     await userDoc.set(jsondata);
   }
-
-//   // Get name from firebase cloud firestore
-//   Stream<List<User>> readUser() => FirebaseFirestore.instance
-//       .collection('users')
-//       .snapshots()
-//       .map((snapshot) =>
-//           snapshot.docs.map((doc) => User.fromJSON(doc.data())).toList());
 }
-
-// // Model for getting user
-// class User {
-//   // Variable for storing name and id of the user
-//   String id;
-//   final String name;
-
-//   // Constructor for storing Id and name of the user
-//   User({this.id = '', required this.name});
-
-//   static User fromJSON(Map<String, dynamic> json) =>
-//       User(name: json['name'], id: json['id']);
-// }
 
 // Model for Sending user Data to server
 class UserData {
   final String id;
+  final String username;
   final String connectionStatus;
   final String bluetoothStatus;
   final String noiseStatus;
   final String vibrationStatus;
   final String temparature;
+  final String workingTime;
   final String longitude;
   final String altitude;
   final DateTime date = DateTime.now();
@@ -543,22 +560,26 @@ class UserData {
   // Constructor to the model
   UserData(
       {required this.id,
+      required this.username,
       required this.connectionStatus,
       required this.bluetoothStatus,
       required this.noiseStatus,
       required this.vibrationStatus,
       required this.temparature,
+      required this.workingTime,
       required this.longitude,
       required this.altitude});
 
   // Method to create JSON object
   Map<String, dynamic> toJSON() => {
         'id': id,
+        'name': username,
         'connectionStatus': connectionStatus,
         'bluetoothStatus': bluetoothStatus,
         'noiseStatus': noiseStatus,
         'vibrationStatus': vibrationStatus,
         'temparature': temparature,
+        'working-time': workingTime,
         'date': date,
         'longitude': longitude,
         'altitude': altitude
