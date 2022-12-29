@@ -58,12 +58,11 @@ const Page = () => (
       <Map />
     </Grid>
     <Box>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} display="flex" justifyContent="flex-end">
         <Grid item xs={6} md={6}>
           <Button
             color="warning"
             fullWidth
-            // onClick={handleClick}
             size="large"
             startIcon={<WarningIcon />}
             variant="contained"
@@ -71,7 +70,7 @@ const Page = () => (
             Warn All Workers
           </Button>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={6} md={6}>
           <Button color="info" fullWidth size="large" startIcon={<CallIcon />} variant="contained">
             Recall All Workers
           </Button>
