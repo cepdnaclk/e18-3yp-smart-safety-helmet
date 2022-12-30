@@ -13,23 +13,23 @@ const containerStyle = {
 const markers = [
   {
     id: 1,
-    name: "Chicago, Illinois",
-    position: { lat: 41.881832, lng: -87.623177 },
+    name: "Jeewantha Udeshika",
+    position: { lat: 36.265095, lng: -115.236933 },
   },
   {
     id: 2,
-    name: "Denver, Colorado",
-    position: { lat: 39.739235, lng: -104.99025 },
+    name: "Ishan Maduranga",
+    position: { lat: 36.265052, lng: -115.236364 },
   },
   {
     id: 3,
-    name: "Los Angeles, California",
-    position: { lat: 34.052235, lng: -118.243683 },
+    name: "Tharindu Chamod",
+    position: { lat: 36.264941, lng: -115.236773 },
   },
   {
     id: 4,
-    name: "New York, New York",
-    position: { lat: 40.712776, lng: -74.005974 },
+    name: "Lakshan Wijekoon",
+    position: { lat: 36.265248, lng: -115.237256 },
   },
 ];
 const mapControls = {
@@ -87,7 +87,7 @@ function Map() {
         <Container maxWidth="xl">
           <GoogleMap
             mapContainerStyle={containerStyle}
-            zoom={100}
+            zoom={50}
             options={mapControls}
             onLoad={handleOnLoad}
           >
