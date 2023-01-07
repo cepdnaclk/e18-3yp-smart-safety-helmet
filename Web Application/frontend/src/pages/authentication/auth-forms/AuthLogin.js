@@ -26,7 +26,6 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 
 // project import
-// import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 // assets
@@ -98,7 +97,11 @@ const AuthLogin = () => {
                     //     setErrors({ submit: err.message });
                     //     setSubmitting(false);
                     // }
+
+                    //initialize the application
                     firebase.initializeApp(firebaseConfig);
+
+                    //sign in with email and pssw
                     firebase
                         .auth()
                         .signInWithEmailAndPassword(values.email, values.password)
@@ -121,12 +124,13 @@ const AuthLogin = () => {
                                         .catch(function (error) {
                                             // an error occurred
                                             console.log(error.message);
+                                            showError(error.message);
                                         });
                                     // print the token
                                     // console.log(idToken);
                                 });
                         })
-                        .catch(function (error) {
+                        .catch((error) => {
                             // an error occurred
                             console.log(error.message);
                             showError(error.message);
@@ -135,6 +139,7 @@ const AuthLogin = () => {
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit}>
+                        <ToastContainer />
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <Stack spacing={1}>
