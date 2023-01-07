@@ -17,6 +17,10 @@ const LoginRoutes = {
         {
             path: 'login',
             element: <AuthLogin />
+        },
+        {
+            path: '/',
+            element: <AuthLogin />
         }
         // {
         //     path: 'register',
