@@ -129,6 +129,53 @@ class BluetoothScreen extends State<Bluetooth> with WidgetsBindingObserver {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
+            // Display connection state
+            // Connection status text
+            const Text(
+              "Connection Status",
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+
+            // Showing bluetoooth connection status
+            // Return the connection status
+            LayoutBuilder(builder: (context, constratints) {
+              if (isConnected == true) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.brightness_1,
+                      color: Colors.green,
+                    ),
+                    Text(" Connected",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green))
+                  ],
+                );
+              }
+              // Rendering disconnected status
+              else {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.brightness_1,
+                      color: Colors.red,
+                    ),
+                    Text(" Disconnected",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red))
+                  ],
+                );
+              }
+            }),
+
+            // Gap between timer widget and connection status
+            const SizedBox(height: 30),
             // Display a list of available Bluetooth devices
             Expanded(
               child: ListView.builder(

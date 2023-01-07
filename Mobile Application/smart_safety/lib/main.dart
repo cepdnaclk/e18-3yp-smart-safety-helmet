@@ -85,84 +85,90 @@ class _Login extends State<Login> {
     // return the UI of the login Screen
     return Scaffold(
       // Body of the login screen
-      body: Column(
-        children: [
-          // Image of the Login UI
-          const Center(
-            child: Image(
-                image: AssetImage('images/mobile_top.jpg'), fit: BoxFit.fill),
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Image of the Login UI
+              const Center(
+                child: Image(
+                    image: AssetImage('images/mobile_top.jpg'),
+                    fit: BoxFit.fill),
+              ),
 
-          // title
-          const Center(
-            child: Text.rich(TextSpan(children: [
-              TextSpan(
-                  text: "Smart ",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 50)),
-              TextSpan(
-                  text: 'Safety',
-                  style: TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 50))
-            ])),
-          ),
+              // title
+              const Center(
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(
+                      text: "Smart ",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 50)),
+                  TextSpan(
+                      text: 'Safety',
+                      style: TextStyle(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 50))
+                ])),
+              ),
 
-          // Space between Title and Inputs
-          const SizedBox(height: 45),
+              // Space between Title and Inputs
+              const SizedBox(height: 45),
 
-          // User Name input
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                  hintText: 'Email', icon: Icon(Icons.person)),
-            ),
-          ),
-
-          // Gap between buttons
-          const SizedBox(height: 25),
-
-          // Password Input
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: TextFormField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                  hintText: 'Password', icon: Icon(Icons.verified_user)),
-            ),
-          ),
-
-          // Gap Betweeen button and input
-          const SizedBox(
-            height: 40,
-          ),
-
-          // Add the Login Button
-          SizedBox(
-            width: 300.0,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: signIn,
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))),
-              child: const Text(
-                'Login',
-                style: TextStyle(
-                  fontSize: 25,
+              // User Name input
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                      hintText: 'Email', icon: Icon(Icons.person)),
                 ),
               ),
-            ),
+
+              // Gap between buttons
+              const SizedBox(height: 25),
+
+              // Password Input
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                      hintText: 'Password', icon: Icon(Icons.verified_user)),
+                ),
+              ),
+
+              // Gap Betweeen button and input
+              const SizedBox(
+                height: 40,
+              ),
+
+              // Add the Login Button
+              SizedBox(
+                width: 300.0,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: signIn,
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
