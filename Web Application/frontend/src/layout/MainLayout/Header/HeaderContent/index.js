@@ -15,6 +15,7 @@ const HeaderContent = () => {
 
     return (
         <>
+            {/* {!matchesXs && <Search />} */}
             {!matchesXs && <Search />}
             {matchesXs && <Box sx={{ width: '100%', ml: 1 }} />}
 
