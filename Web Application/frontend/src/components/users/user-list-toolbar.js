@@ -12,9 +12,9 @@ export const UserListToolBar = (props) => (
                 m: -1
             }}
         >
-            <Typography sx={{ m: 1 }} variant="h4">
+            {/* <Typography sx={{ m: 1 }} variant="h4">
                 Users
-            </Typography>
+            </Typography> */}
             <Box sx={{ m: 1 }}>
                 <Button color="primary" variant="contained">
                     Add Users
