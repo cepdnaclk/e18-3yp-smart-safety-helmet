@@ -3,6 +3,23 @@ import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from '@react-google-map
 import { Box, Container } from '@mui/material';
 import axios from 'axios';
 
+//import assests
+import { useNavigate } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+
+// firebase app configuration
+const firebaseConfig = {
+    apiKey: 'AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ',
+    authDomain: 'smart-helmet-74616.firebaseapp.com',
+    databaseURL: 'https://smart-helmet-74616-default-rtdb.firebaseio.com',
+    projectId: 'smart-helmet-74616',
+    storageBucket: 'smart-helmet-74616.appspot.com',
+    messagingSenderId: '20313702925',
+    appId: '1:20313702925:web:e293f804b8bbaaa6018b44'
+};
+
 const containerStyle = {
     width: 'auto',
     height: '480px'
@@ -39,6 +56,9 @@ const mapControls = {
 };
 
 const Map = () => {
+    // Navigator
+    const navigate = useNavigate();
+
     const [activeMarker, setActiveMarker] = useState(null);
 
     const handleActiveMarker = (marker) => {
@@ -51,12 +71,31 @@ const Map = () => {
     useEffect(() => {
         async function getData() {
             // Send the application data to the backend
-            const res = await axios({
-                method: 'GET',
-                url: 'https://dog.ceo/api/breeds/image/random'
-            });
+            // const res = await axios({
+            //     method: 'GET',
+            //     url: 'https://dog.ceo/api/breeds/image/random'
+            // });
 
-            console.log(res);
+            // console.log(res);
+            firebase.initializeApp(firebaseConfig);
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (user) {
+                // console.log(user.uid);
+
+                //if there is logged user already
+                //navigate to dashboard
+                navigate('/dashboard');
+                // ...
+            } else {
+                // User is signed out
+                // No user is signed in.
+                // console.log('No User Signed In');
+
+                //if there is no logged user go to login
+                navigate('/login');
+            }
         }
 
         getData();

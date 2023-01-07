@@ -1,5 +1,8 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import {
@@ -23,7 +26,7 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 
 // project import
-import FirebaseSocial from './FirebaseSocial';
+// import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 // assets
@@ -31,10 +34,14 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+// import firebaseConfig from 'firebaseConfig';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const AuthLogin = () => {
+    // Navigator
+    const navigate = useNavigate();
+
     const [checked, setChecked] = React.useState(false);
 
     const [showPassword, setShowPassword] = React.useState(false);
@@ -44,6 +51,19 @@ const AuthLogin = () => {
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
+    };
+
+    const showError = (err) => {
+        toast.error(err, {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+        });
     };
 
     // firebase app configuration
@@ -56,8 +76,6 @@ const AuthLogin = () => {
         messagingSenderId: '20313702925',
         appId: '1:20313702925:web:e293f804b8bbaaa6018b44'
     };
-
-    // firebase.initializeApp(firebaseConfig);
 
     return (
         <>
@@ -95,18 +113,23 @@ const AuthLogin = () => {
                                         .post('https://us-central1-smart-helmet-74616.cloudfunctions.net/appFunc/verifyToken', { idToken })
                                         .then(function (response) {
                                             // ID token was verified by the backend
-                                            console.log(response);
+                                            console.log(response.data);
+
+                                            //goto dashboard page
+                                            navigate('/dashboard');
                                         })
                                         .catch(function (error) {
                                             // an error occurred
                                             console.log(error.message);
                                         });
-
-                                    console.log(idToken);
+                                    // print the token
+                                    // console.log(idToken);
                                 });
                         })
                         .catch(function (error) {
                             // an error occurred
+                            console.log(error.message);
+                            showError(error.message);
                         });
                 }}
             >
