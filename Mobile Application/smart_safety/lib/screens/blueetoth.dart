@@ -150,6 +150,8 @@ class BluetoothScreen extends State<Bluetooth> with WidgetsBindingObserver {
                         // await flutterBluetoothSerial.connect(device);
                         var pairingStatus = await flutterBluetoothSerial
                             .bondDeviceAtAddress(device.address);
+                        // Connect to the Bluetooth device
+                        await BluetoothConnection.toAddress(device.address);
 
                         isConnected = pairingStatus!;
 
