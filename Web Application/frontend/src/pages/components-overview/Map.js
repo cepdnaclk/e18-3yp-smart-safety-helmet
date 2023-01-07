@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { Box, Container } from '@mui/material';
-import axios from 'axios';
+// import axios from 'axios';
 
 //import assests
 import { useNavigate } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
@@ -78,24 +77,23 @@ const Map = () => {
 
             // console.log(res);
             firebase.initializeApp(firebaseConfig);
-            const auth = getAuth();
-            const user = auth.currentUser;
 
-            if (user) {
-                // console.log(user.uid);
+            //checks whether a user is successfully logged in or not
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    //if there is logged user already
+                    //navigate to dashboard
+                    navigate('/dashboard');
+                    // ...
+                } else {
+                    // User is signed out
+                    // No user is signed in.
+                    // console.log('No User Signed In');
 
-                //if there is logged user already
-                //navigate to dashboard
-                navigate('/dashboard');
-                // ...
-            } else {
-                // User is signed out
-                // No user is signed in.
-                // console.log('No User Signed In');
-
-                //if there is no logged user go to login
-                navigate('/login');
-            }
+                    //if there is no logged user go to login
+                    navigate('/login');
+                }
+            });
         }
 
         getData();
