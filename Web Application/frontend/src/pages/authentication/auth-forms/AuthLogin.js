@@ -92,7 +92,7 @@ const AuthLogin = () => {
                                 .then(function (idToken) {
                                     // send the ID token to the backend
                                     axios
-                                        .post('http://127.0.0.1:5001/smart-helmet-74616/us-central1/appFunc/verifyToken', { idToken })
+                                        .post('https://us-central1-smart-helmet-74616.cloudfunctions.net/appFunc/verifyToken', { idToken })
                                         .then(function (response) {
                                             // ID token was verified by the backend
                                             console.log(response);
