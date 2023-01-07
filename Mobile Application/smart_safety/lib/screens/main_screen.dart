@@ -1,13 +1,21 @@
 // Login Screen
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smart_safety/main.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:smart_safety/screens/blueetoth.dart';
+import 'package:smart_safety/screens/discover_page.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class MainScreen extends StatefulWidget {
+  // Variable to store username
+  final String username;
+
   // Constructor
-  const MainScreen({super.key});
+  const MainScreen({super.key, required this.username});
 
   @override
   State<StatefulWidget> createState() => _MainScrren();
@@ -17,11 +25,11 @@ class _MainScrren extends State<MainScreen> {
   // Create a stopwatch for time measurements
   var stopwatch = Stopwatch();
 
-  // Variables to maintain the screen
-  String username = 'John';
+  // Variables to maintain the nocation
+  bool getNotified = false;
 
   // Variables for maintain the bluetooth and connection status
-  bool connectionStatus = true;
+  // bool connectionStatus = true;
   bool bluetoothStatus = false;
 
   //Variable for time measuring
@@ -31,11 +39,21 @@ class _MainScrren extends State<MainScreen> {
   bool emergencyPressed = false;
   bool logoutPressed = false;
 
-  // Variable for stiring temperarture
-  String temperarture = "27";
+  // Variable for stiring temperature
+  String temperature = "27";
   // Variables for Noise and Vibration indicators to show the saftey levels
   String vibrationStatus = "Safe";
   String noiseStatus = "Safe";
+
+  // State for locations
+  var longitude = '';
+  var altitude = '';
+
+  // Function t dispose
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   // Buliding the UI of the main Screen
   @override
@@ -53,10 +71,26 @@ class _MainScrren extends State<MainScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Welcome text of the app
-                const Text(
-                  "  Welcome, John!",
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                Row(
+                  children: [
+                    const Text(
+                      "  Hi, ",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                    // Welcome text of the app
+                    Text(
+                      widget.username,
+                      style: const TextStyle(
+                          fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+
+                    const Text(
+                      " !",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    )
+                  ],
                 ),
 
                 // Bluetooth button
@@ -66,12 +100,16 @@ class _MainScrren extends State<MainScreen> {
                   iconSize: 40,
                   onPressed: () {
                     // have to implement function to the connect with bluetooth
+                    // Pairing screen with blueetoth
+                    navigateBluetooth();
                     setState(() {
-                      bluetoothStatus = true;
-                      startStopWatch(); // Starting stopwatch
-                      updateWorkingTime(); // Updating working time
-                      updateState();
+                      bluetoothStatus =
+                          FlutterBluetoothSerial.instance.state as bool;
                     });
+                    // Updating status
+                    // startStopWatch(); // Starting stopwatch
+                    // updateWorkingTime(); // Updating working time
+                    // updateState();
                   },
                 ),
               ],
@@ -90,7 +128,7 @@ class _MainScrren extends State<MainScreen> {
 
             // Return the connection status
             LayoutBuilder(builder: (context, constratints) {
-              if (connectionStatus == true) {
+              if (bluetoothStatus == true) {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
@@ -115,7 +153,7 @@ class _MainScrren extends State<MainScreen> {
                       Icons.brightness_1,
                       color: Colors.red,
                     ),
-                    Text(" Disonnected",
+                    Text(" Disconnected",
                         style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -192,7 +230,7 @@ class _MainScrren extends State<MainScreen> {
                     const Text("  Temperature",
                         style: TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold)),
-                    Text("$temperarture C ",
+                    Text("$temperature C ",
                         style: const TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold))
                   ],
@@ -335,24 +373,29 @@ class _MainScrren extends State<MainScreen> {
 
   // Function to update state of the stopwatch
   void calculateTime() {
-    if (stopwatch.isRunning) {
-      updateWorkingTime(); // Callback the updaing function
-    }
-
     setState(() {
       // Setting working time in state
       workingTime =
           '${stopwatch.elapsed.inHours.toString().padLeft(2, "0")}:${(stopwatch.elapsed.inMinutes % 60).toString().padLeft(2, "0")}:${(stopwatch.elapsed.inSeconds % 60).toString().padLeft(2, "0")}';
     });
+
+    if (stopwatch.isRunning) {
+      updateWorkingTime(); // Callback the updaing function
+    }
   }
 
   // Function to perform Logout
   void logout() {
     // Navigation to the next screen
-    // Navigator.pushReplacement(
-    //     context, MaterialPageRoute(builder: (context) => const Login()));
     // Calling firebase signout method
     FirebaseAuth.instance.signOut();
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (context) => const Login()));
+
+    // Replace the page with Login page
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const Login()));
+    // dispose();
   }
 
   // Callback function to update state in every 5 second
@@ -369,18 +412,50 @@ class _MainScrren extends State<MainScreen> {
   void checkState() {
     Random random = Random();
 
+    // Get the location
+    // Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+
     // Set states (After analysing data recieved from bluetooth module)
     setState(() {
-      connectionStatus = !connectionStatus;
-      temperarture = random.nextInt(50).toString();
+      bluetoothStatus = !bluetoothStatus;
+      temperature = random.nextInt(50).toString();
       vibrationStatus = vibrationStatus;
       noiseStatus = noiseStatus;
     });
 
-    //Update State
+    // Data which is send to the Colud firestore
+    // String conState = 'disconnected';
+    String btState = 'disconnected';
+
+    // if (connectionStatus) {
+    //   conState = "connected";
+    // }
+    if (bluetoothStatus) {
+      btState = "connected";
+    }
+
+    createData(
+        username: widget.username,
+        // connectionStatus: conState,
+        bluetoothStatus: btState,
+        noiseStatus: noiseStatus,
+        vibrationStatus: vibrationStatus,
+        workingTime: workingTime,
+        temparature: temperature.toString());
+
+    //Update State if bluetooth connection is available
     if (bluetoothStatus) {
       updateState();
     }
+
+    // get notification
+    getNotifications();
+  }
+
+  // Function to the navigate to the Bluutoth pairing screen
+  void navigateBluetooth() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Bluetooth()));
   }
 
   // Function to show message which shows that emergency was sent
@@ -422,6 +497,11 @@ class _MainScrren extends State<MainScreen> {
                 ),
               ),
               onPressed: () {
+                setState(() {
+                  emergencyPressed = false; // Set State to emergency pressed
+                });
+                sendNotification(
+                    name: widget.username); // Send noptification with username
                 Navigator.of(context).pop();
               },
             ),
@@ -430,4 +510,182 @@ class _MainScrren extends State<MainScreen> {
       },
     );
   }
+
+  // Funcion to popup notification
+  Future<void> notifications() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Notification',
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text(
+                  'Emergency is detetced around you !',
+                  style: TextStyle(fontSize: 25),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Icon(
+                  Icons.notification_add_rounded,
+                  color: Colors.yellow,
+                  size: 100,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  getNotified = false; // Set State to emergency pressed
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to create notification
+  Future sendNotification({required String name}) async {
+    // Reference to the notification database
+    final userDoc =
+        FirebaseFirestore.instance.collection('safety-notification').doc();
+
+    // Create notification object
+    final notification = Notification(name: widget.username);
+
+    // Convert into the JSOn format
+    final json = notification.toJSON();
+
+    // Send to the cloud firestore
+    await userDoc.set(json);
+  }
+
+  // Function to send data to the database
+  Future createData(
+      {required String username,
+      // required String connectionStatus,
+      required String bluetoothStatus,
+      required String noiseStatus,
+      required String vibrationStatus,
+      required String temparature,
+      required String workingTime}) async {
+    // Referenec to the collection (AppData)
+    final userDoc = FirebaseFirestore.instance.collection('appdata').doc();
+
+    // Create data object
+    final data = UserData(
+        id: userDoc.id,
+        username: username,
+        // connectionStatus: connectionStatus,
+        bluetoothStatus: bluetoothStatus,
+        noiseStatus: noiseStatus,
+        vibrationStatus: vibrationStatus,
+        temparature: temparature,
+        workingTime: workingTime,
+        longitude: longitude,
+        altitude: altitude);
+
+    // Create JSON object
+    final jsondata = data.toJSON();
+
+    // Send data to the Cloud Firestore
+    await userDoc.set(jsondata);
+  }
+
+  // Firebase get realtime notification
+  Future getNotifications() async {
+    // Use firebase instance
+    DatabaseReference database = FirebaseDatabase.instance.ref();
+
+    // Set the state of notification
+    final snapshot = await database.child('notified').get();
+    if (snapshot.exists) {
+      // ignore: avoid_print
+      print(snapshot.toString());
+    } else {
+      // ignore: avoid_print
+      print('No data available.');
+    }
+
+    // Call popup notification
+    if (getNotified) {
+      notifications();
+    }
+  }
+}
+
+// Model for Sending user Data to server
+class UserData {
+  final String id;
+  final String username;
+  // final String connectionStatus;
+  final String bluetoothStatus;
+  final String noiseStatus;
+  final String vibrationStatus;
+  final String temparature;
+  final String workingTime;
+  final String longitude;
+  final String altitude;
+  final DateTime date = DateTime.now();
+
+  // Constructor to the model
+  UserData(
+      {required this.id,
+      required this.username,
+      // required this.connectionStatus,
+      required this.bluetoothStatus,
+      required this.noiseStatus,
+      required this.vibrationStatus,
+      required this.temparature,
+      required this.workingTime,
+      required this.longitude,
+      required this.altitude});
+
+  // Method to create JSON object
+  Map<String, dynamic> toJSON() => {
+        'id': id,
+        'name': username,
+        // 'connectionStatus': connectionStatus,
+        'bluetoothStatus': bluetoothStatus,
+        'noiseStatus': noiseStatus,
+        'vibrationStatus': vibrationStatus,
+        'temparature': temparature,
+        'working-time': workingTime,
+        'date': date,
+        'longitude': longitude,
+        'altitude': altitude
+      };
+
+  // Method for Creating data to the JSON format
+}
+
+// Notifications Model
+class Notification {
+  // Variables of the user
+  final String name;
+  final DateTime date = DateTime.now();
+
+  // Constructor of this model
+  Notification({required this.name});
+
+  // Convert object into the JSON format
+  Map<String, dynamic> toJSON() => {'name': name, 'date': date};
 }
