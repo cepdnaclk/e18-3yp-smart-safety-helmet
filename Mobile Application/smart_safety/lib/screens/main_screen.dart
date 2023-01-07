@@ -1,16 +1,19 @@
 // Login Screen
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smart_safety/main.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:smart_safety/screens/blueetoth.dart';
+import 'package:smart_safety/screens/discover_page.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class MainScreen extends StatefulWidget {
   // Variable to store username
   final String username;
+
   // Constructor
   const MainScreen({super.key, required this.username});
 
@@ -26,7 +29,7 @@ class _MainScrren extends State<MainScreen> {
   bool getNotified = false;
 
   // Variables for maintain the bluetooth and connection status
-  bool connectionStatus = true;
+  // bool connectionStatus = true;
   bool bluetoothStatus = false;
 
   //Variable for time measuring
@@ -97,12 +100,16 @@ class _MainScrren extends State<MainScreen> {
                   iconSize: 40,
                   onPressed: () {
                     // have to implement function to the connect with bluetooth
+                    // Pairing screen with blueetoth
+                    navigateBluetooth();
                     setState(() {
-                      bluetoothStatus = true;
-                      startStopWatch(); // Starting stopwatch
-                      updateWorkingTime(); // Updating working time
-                      updateState();
+                      bluetoothStatus =
+                          FlutterBluetoothSerial.instance.state as bool;
                     });
+                    // Updating status
+                    // startStopWatch(); // Starting stopwatch
+                    // updateWorkingTime(); // Updating working time
+                    // updateState();
                   },
                 ),
               ],
@@ -121,7 +128,7 @@ class _MainScrren extends State<MainScreen> {
 
             // Return the connection status
             LayoutBuilder(builder: (context, constratints) {
-              if (connectionStatus == true) {
+              if (bluetoothStatus == true) {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
@@ -410,39 +417,45 @@ class _MainScrren extends State<MainScreen> {
 
     // Set states (After analysing data recieved from bluetooth module)
     setState(() {
-      connectionStatus = !connectionStatus;
+      bluetoothStatus = !bluetoothStatus;
       temperature = random.nextInt(50).toString();
       vibrationStatus = vibrationStatus;
       noiseStatus = noiseStatus;
     });
 
     // Data which is send to the Colud firestore
-    String conState = 'disconnected';
+    // String conState = 'disconnected';
     String btState = 'disconnected';
 
-    if (connectionStatus) {
-      conState = "connected";
-    }
+    // if (connectionStatus) {
+    //   conState = "connected";
+    // }
     if (bluetoothStatus) {
       btState = "connected";
     }
 
     createData(
         username: widget.username,
-        connectionStatus: conState,
+        // connectionStatus: conState,
         bluetoothStatus: btState,
         noiseStatus: noiseStatus,
         vibrationStatus: vibrationStatus,
         workingTime: workingTime,
         temparature: temperature.toString());
 
-    //Update State
+    //Update State if bluetooth connection is available
     if (bluetoothStatus) {
       updateState();
     }
 
     // get notification
     getNotifications();
+  }
+
+  // Function to the navigate to the Bluutoth pairing screen
+  void navigateBluetooth() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Bluetooth()));
   }
 
   // Function to show message which shows that emergency was sent
@@ -568,7 +581,7 @@ class _MainScrren extends State<MainScreen> {
   // Function to send data to the database
   Future createData(
       {required String username,
-      required String connectionStatus,
+      // required String connectionStatus,
       required String bluetoothStatus,
       required String noiseStatus,
       required String vibrationStatus,
@@ -581,7 +594,7 @@ class _MainScrren extends State<MainScreen> {
     final data = UserData(
         id: userDoc.id,
         username: username,
-        connectionStatus: connectionStatus,
+        // connectionStatus: connectionStatus,
         bluetoothStatus: bluetoothStatus,
         noiseStatus: noiseStatus,
         vibrationStatus: vibrationStatus,
@@ -623,7 +636,7 @@ class _MainScrren extends State<MainScreen> {
 class UserData {
   final String id;
   final String username;
-  final String connectionStatus;
+  // final String connectionStatus;
   final String bluetoothStatus;
   final String noiseStatus;
   final String vibrationStatus;
@@ -637,7 +650,7 @@ class UserData {
   UserData(
       {required this.id,
       required this.username,
-      required this.connectionStatus,
+      // required this.connectionStatus,
       required this.bluetoothStatus,
       required this.noiseStatus,
       required this.vibrationStatus,
@@ -650,7 +663,7 @@ class UserData {
   Map<String, dynamic> toJSON() => {
         'id': id,
         'name': username,
-        'connectionStatus': connectionStatus,
+        // 'connectionStatus': connectionStatus,
         'bluetoothStatus': bluetoothStatus,
         'noiseStatus': noiseStatus,
         'vibrationStatus': vibrationStatus,
