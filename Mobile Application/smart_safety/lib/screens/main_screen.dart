@@ -9,6 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:smart_safety/screens/blueetoth.dart';
 import 'package:smart_safety/screens/discover_page.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MainScreen extends StatefulWidget {
   // Variable to store username
@@ -49,10 +50,48 @@ class _MainScrren extends State<MainScreen> {
   var longitude = '';
   var altitude = '';
 
+  // Variable for storing geolocation
+  var geolocation = '';
+
+  // Function of initializing state
+  @override
+  void initState() {
+    // Constructor
+    super.initState();
+
+    // Request access to geo ocator when initializing
+    requestLocationAccess();
+  }
+
   // Function t dispose
   @override
   void dispose() {
     super.dispose();
+  }
+
+  // Function to request access to geo locator and set location state
+  Future requestLocationAccess() async {
+    // Request for location services to be on
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      // If permission is denied request for permission
+      permission = await Geolocator.requestPermission();
+      var position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
+
+      setState(() {
+        geolocation = "$position";
+      });
+
+      //After requesting permisssion cheeck whther permission is denieed or not
+      // IF permission is denied set it in state
+      if (permission == LocationPermission.denied) {
+        setState(() {
+          geolocation = "Permission Denied";
+        });
+      }
+    }
   }
 
   // Buliding the UI of the main Screen
@@ -165,6 +204,8 @@ class _MainScrren extends State<MainScreen> {
 
             // Gap between timer widget and connection status
             const SizedBox(height: 30),
+
+            Text("test $geolocation"),
 
             // Timer to get work time
             SizedBox(
@@ -401,6 +442,8 @@ class _MainScrren extends State<MainScreen> {
   // Callback function to update state in every 5 second
   // initialize duration
   final updateDuration = const Duration(seconds: 5);
+
+  // Function to update State
   void updateState() {
     // Call back check state
     Timer(updateDuration, checkState);
@@ -411,9 +454,6 @@ class _MainScrren extends State<MainScreen> {
   // then after 1 second state will be updated
   void checkState() {
     Random random = Random();
-
-    // Get the location
-    // Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
 
     // Set states (After analysing data recieved from bluetooth module)
     setState(() {
@@ -427,13 +467,15 @@ class _MainScrren extends State<MainScreen> {
     // String conState = 'disconnected';
     String btState = 'disconnected';
 
-    // if (connectionStatus) {
-    //   conState = "connected";
-    // }
+    // If bluetoooth is enabled set BT state to connected
     if (bluetoothStatus) {
       btState = "connected";
     }
 
+    // Update location
+    updatePosition();
+
+    // Create data with sensor details to send to the firebase
     createData(
         username: widget.username,
         // connectionStatus: conState,
@@ -450,6 +492,21 @@ class _MainScrren extends State<MainScreen> {
 
     // get notification
     getNotifications();
+  }
+
+  // Function to update position
+  Future updatePosition() async {
+    // Get the position
+    var position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+
+    // Set state as position
+    String locationData = "$position";
+
+    // Set state
+    setState(() {
+      geolocation = locationData;
+    });
   }
 
   // Function to the navigate to the Bluutoth pairing screen
@@ -600,8 +657,10 @@ class _MainScrren extends State<MainScreen> {
         vibrationStatus: vibrationStatus,
         temparature: temparature,
         workingTime: workingTime,
-        longitude: longitude,
-        altitude: altitude);
+        position: geolocation);
+    // location: geolocation);
+    // longitude: longitude,
+    // altitude: altitude);
 
     // Create JSON object
     final jsondata = data.toJSON();
@@ -642,9 +701,11 @@ class UserData {
   final String vibrationStatus;
   final String temparature;
   final String workingTime;
-  final String longitude;
-  final String altitude;
+  // final String longitude;
+  // final String altitude;
+  // final String location;
   final DateTime date = DateTime.now();
+  final String position;
 
   // Constructor to the model
   UserData(
@@ -656,8 +717,10 @@ class UserData {
       required this.vibrationStatus,
       required this.temparature,
       required this.workingTime,
-      required this.longitude,
-      required this.altitude});
+      required this.position});
+  // required this.location});
+  // required this.longitude,
+  // required this.altitude});
 
   // Method to create JSON object
   Map<String, dynamic> toJSON() => {
@@ -670,8 +733,9 @@ class UserData {
         'temparature': temparature,
         'working-time': workingTime,
         'date': date,
-        'longitude': longitude,
-        'altitude': altitude
+        'location': position
+        // 'longitude': longitude,
+        // 'altitude': altitude
       };
 
   // Method for Creating data to the JSON format
