@@ -7,17 +7,7 @@ import { Box, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-
-// firebase app configuration
-const firebaseConfig = {
-    apiKey: 'AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ',
-    authDomain: 'smart-helmet-74616.firebaseapp.com',
-    databaseURL: 'https://smart-helmet-74616-default-rtdb.firebaseio.com',
-    projectId: 'smart-helmet-74616',
-    storageBucket: 'smart-helmet-74616.appspot.com',
-    messagingSenderId: '20313702925',
-    appId: '1:20313702925:web:e293f804b8bbaaa6018b44'
-};
+import config from 'firebaseConfig';
 
 const containerStyle = {
     width: 'auto',
@@ -76,7 +66,7 @@ const Map = () => {
             // });
 
             // console.log(res);
-            firebase.initializeApp(firebaseConfig);
+            firebase.initializeApp(config);
 
             //checks whether a user is successfully logged in or not
             firebase.auth().onAuthStateChanged((user) => {
@@ -106,10 +96,8 @@ const Map = () => {
     };
 
     const { isLoaded } = useJsApiLoader({
-        // mapId: process.env.MAP_ID,
-        // googleMapsApiKey: process.env.MAPS_API_KEY // Add your API key
-        mapId: '728e8bcdc7d02a3e',
-        googleMapsApiKey: 'AIzaSyACvQ9R_hLNd41f-y3fdqWk-ph_-d5g44U' // Add your API key
+        mapId: process.env.REACT_APP_MAP_ID,
+        googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY
     });
 
     return isLoaded ? (

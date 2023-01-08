@@ -8,17 +8,7 @@ import { getInitials } from '../../utils/get-initials';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-
-// firebase app configuration
-const firebaseConfig = {
-    apiKey: 'AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ',
-    authDomain: 'smart-helmet-74616.firebaseapp.com',
-    databaseURL: 'https://smart-helmet-74616-default-rtdb.firebaseio.com',
-    projectId: 'smart-helmet-74616',
-    storageBucket: 'smart-helmet-74616.appspot.com',
-    messagingSenderId: '20313702925',
-    appId: '1:20313702925:web:e293f804b8bbaaa6018b44'
-};
+import config from 'firebaseConfig';
 
 export const UserListResults = ({ customers, ...rest }) => {
     // Navigator
@@ -39,7 +29,7 @@ export const UserListResults = ({ customers, ...rest }) => {
     useEffect(() => {
         async function getData() {
             //initialize the App
-            firebase.initializeApp(firebaseConfig);
+            firebase.initializeApp(config);
 
             //checks whether a user is successfully logged in or not
             firebase.auth().onAuthStateChanged((user) => {

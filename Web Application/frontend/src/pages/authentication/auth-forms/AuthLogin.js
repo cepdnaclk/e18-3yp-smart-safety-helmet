@@ -33,7 +33,7 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-// import firebaseConfig from 'firebaseConfig';
+import config from 'firebaseConfig';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -65,17 +65,6 @@ const AuthLogin = () => {
         });
     };
 
-    // firebase app configuration
-    const firebaseConfig = {
-        apiKey: 'AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ',
-        authDomain: 'smart-helmet-74616.firebaseapp.com',
-        databaseURL: 'https://smart-helmet-74616-default-rtdb.firebaseio.com',
-        projectId: 'smart-helmet-74616',
-        storageBucket: 'smart-helmet-74616.appspot.com',
-        messagingSenderId: '20313702925',
-        appId: '1:20313702925:web:e293f804b8bbaaa6018b44'
-    };
-
     return (
         <>
             <Formik
@@ -99,7 +88,7 @@ const AuthLogin = () => {
                     // }
 
                     //initialize the application
-                    firebase.initializeApp(firebaseConfig);
+                    firebase.initializeApp(config);
 
                     //sign in with email and pssw
                     firebase
