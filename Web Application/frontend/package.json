@@ -19,6 +19,7 @@
         "@testing-library/user-event": "^14.4.3",
         "apexcharts": "^3.35.5",
         "axios": "^1.2.2",
+        "env-cmd": "^10.1.0",
         "firebase": "^9.15.0",
         "firebase-app": "^0.0.1",
         "firebase-auth": "^0.1.2",

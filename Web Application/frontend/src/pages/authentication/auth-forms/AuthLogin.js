@@ -33,7 +33,7 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-// import firebaseConfig from 'firebaseConfig';
+// import config from 'firebaseConfig';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
