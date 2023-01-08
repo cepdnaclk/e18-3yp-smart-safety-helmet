@@ -1,6 +1,6 @@
-import { Box, Container, Grid, Pagination } from '@mui/material';
-import { products } from '../__mocks__/products';
-import { ProductCard } from '../components/product/product-card';
+import { Box, Container, Grid } from '@mui/material';
+import { statistics } from '../../__mocks__/statistics';
+import { StatCard } from '../../components/statistics/stat-card';
 
 const Page = () => (
     <>
@@ -12,12 +12,12 @@ const Page = () => (
             }}
         >
             <Container maxWidth={false}>
-                {/* <ProductListToolbar /> */}
+                {/* <StatListToolbar /> */}
                 <Box sx={{ pt: 3 }}>
                     <Grid container spacing={3}>
-                        {products.map((product) => (
-                            <Grid item key={product.id} lg={4} md={6} xs={12}>
-                                <ProductCard product={product} />
+                        {statistics.map((stat) => (
+                            <Grid item key={stat.id} lg={4} md={6} xs={12}>
+                                <StatCard stat={stat} />
                             </Grid>
                         ))}
                     </Grid>
