@@ -51,7 +51,7 @@ class _MainScrren extends State<MainScreen> {
   var altitude = '';
 
   // Variable for storing geolocation
-  var geolocation = '';
+  String geolocation = '';
 
   // Function of initializing state
   @override
@@ -77,9 +77,12 @@ class _MainScrren extends State<MainScreen> {
     if (permission == LocationPermission.denied) {
       // If permission is denied request for permission
       permission = await Geolocator.requestPermission();
+
+      // Get the location
       var position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.best);
 
+      // Set the location to the state
       setState(() {
         geolocation = "$position";
       });
@@ -91,6 +94,19 @@ class _MainScrren extends State<MainScreen> {
           geolocation = "Permission Denied";
         });
       }
+    }
+
+    // If permission are given as always or location services are while in use
+    if ((permission == LocationPermission.whileInUse) ||
+        (permission == LocationPermission.always)) {
+      // Get the location
+      var position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
+
+      // Set the location to the state
+      setState(() {
+        geolocation = "$position";
+      });
     }
   }
 
