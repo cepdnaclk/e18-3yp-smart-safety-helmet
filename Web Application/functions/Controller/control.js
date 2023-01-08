@@ -1,16 +1,17 @@
 import { db } from "../Auth/firebase.js";
 import admin from "firebase-admin";
 
-let authorized = false;      /**@ToDo make this from firebase */
+let authorized = false;
 
 
 // Create the collection
-const userDB = db.collection('users');
+const userDB = db.collection('workers');
+const supervisorDB = db.collection('supervisors');
 
 // Function to get given user details
 export const getUser = async (req, res) => {
     try{
-        const response = await userDB.doc('userDetails').get();
+        const response = await userDB.doc().get();
         res.send(response.data());
     }
     catch(err){
@@ -19,19 +20,45 @@ export const getUser = async (req, res) => {
     
 }
 
+// Function to get all the user details in the database
+// export const getAllWorkers = async
+
 export const addUser = async (req, res) => {
     try{
-        console.log(req.body)
-        const id = req.body.name;
-        const user = {
-            post: req.body.post,
+        // console.log(req.body);
+
+        let authID;
+
+        console.log("before authentication process")
+
+        // Creating user in user authentication
+        admin.auth().createUser({
             email: req.body.email,
-            telNo: req.body.telNo,
-            bloodGroup: req.body.bloodGroup
-        }
-        console.log(user);
-        const response = await userDB.doc(id).set(user);
-        res.send(response);
+            password: req.body.password
+          })
+            .then(async userRecord => {
+                authID = userRecord.uid;
+                console.log(`Successfully created new user: ${userRecord.uid}`);
+                // Creating user in fiirestore
+                const id = req.body.name;
+                const user = {
+                    post: req.body.post,
+                    email: req.body.email,
+                    telNo: req.body.telNo,
+                    bloodGroup: req.body.bloodGroup,
+                    UserID : authID
+                }
+                console.log(user);
+
+                const response = await userDB.doc(id).set(user);
+                console.log("User Created in fb firestore", user);
+                return res.status(200).send(response);
+            })
+            .catch(error => {
+              console.log(`Error creating new user: ${error}`);
+            });
+
+        console.log("authentication process completed")
     }
     catch(err){
         res.send(err);
@@ -51,8 +78,28 @@ export const getSensorData = (req, res) => {
 /**@ToDo 
  * Get max data from the all the fields in firebase
 */
-export const getMaxSensor = (req, res) => {
+export const getMaxSensor = async (req, res) => {
+    // Create a query to sort the documents in the collection by the field value in descending order
+    // and limit the results to the first (highest) document
+    const query = userDB.orderBy('Tempurature', 'desc').limit(1);
 
+    // Get the first (highest) document
+    await query.get().then(snapshot => {
+        snapshot.forEach(doc => {
+          // Get the specific fields that you want from the document
+          const maxTemp = doc.get("Tempurature");
+          const userID = doc.get("UserID");
+
+          const data = {
+            "userID" : userID,
+            "MaxTemperature": maxTemp
+          }
+          return res.status(200).json(data);
+        });
+      }).catch(error => {
+        return res.status(404).send(error.message);
+      });
+        //const userName = snapshot.docs[0].get('UserID');
 }
 
 // Function to verify the autheniticated user
@@ -64,8 +111,21 @@ export const verifyToken = (req, res) => {
     admin.auth().verifyIdToken(idToken).then(decordedTocken => {
         const userId = decordedTocken.uid;
         console.log(userId);
-        authorized = true;
-        res.send("Successfully Logged");
+
+        supervisorDB.where('UserID', '==', userId).get()
+        .then(snapshot => {
+            if (snapshot.empty){
+                authorized = false;
+                return res.send("Logging Failed");
+            }
+            authorized = true;
+            res.send("Successfully Logged");
+        })
+        .catch(err => {
+            authorized = false;
+            res.send("Login Failed", err.message);
+        })
+        
 
     }).catch(err => {
         res.status(404).send("Login Faild");
