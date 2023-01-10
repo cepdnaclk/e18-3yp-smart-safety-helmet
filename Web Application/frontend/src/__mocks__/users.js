@@ -3,54 +3,36 @@ import { v4 as uuid } from 'uuid';
 export const users = [
     {
         id: uuid(),
-        address: {
-            country: 'USA',
-            state: 'West Virginia',
-            city: 'Parkersburg',
-            street: '2849 Fulton Street'
-        },
         avatarUrl: '/avatars/avatar_3.png',
-        createdAt: 1555016400000,
-        email: '1:30',
-        name: 'Ekaterina Tankova',
-        noise: 'unsafe',
-        vibration: 'unsafe',
-        temperature: '30C',
-        phone: '304-428-3097'
+        workingTime: '1:30',
+        Name: 'Ekaterina Tankova',
+        Noice_Level: 'unsafe',
+        Vibration_Level: 'unsafe',
+        Temperature: '30C',
+        phone: '304-428-3097',
+        connectionStatus: 'connected'
     },
     {
         id: uuid(),
-        address: {
-            country: 'USA',
-            state: 'Bristow',
-            city: 'Iowa',
-            street: '1865  Pleasant Hill Road'
-        },
         avatarUrl: '/avatars/avatar_4.png',
-        createdAt: 1555016400000,
-        email: '2:45',
-        name: 'Cao Yu',
-        noise: 'safe',
-        vibration: 'safe',
-        temperature: '28C',
-        phone: '712-351-5711'
+        workingTime: '2:45',
+        Name: 'Cao Yu',
+        Noice_Level: 'safe',
+        Vibration_Level: 'safe',
+        Temperature: '28C',
+        phone: '712-351-5711',
+        connectionStatus: 'connected'
     },
     {
         id: uuid(),
-        address: {
-            country: 'USA',
-            state: 'Georgia',
-            city: 'Atlanta',
-            street: '4894  Lakeland Park Drive'
-        },
         avatarUrl: '/avatars/avatar_2.png',
-        createdAt: 1555016400000,
-        email: '4:10',
-        name: 'Alexa Richardson',
-        noise: 'safe',
-        temperature: '30C',
-        vibration: 'unsafe',
-        phone: '770-635-2682'
+        workingTime: '4:10',
+        Name: 'Alexa Richardson',
+        Noice_Level: 'safe',
+        Temperature: '30C',
+        Vibration_Level: 'unsafe',
+        phone: '770-635-2682',
+        connectionStatus: 'disconnected'
     }
     // {
     //   id: uuid(),
@@ -62,8 +44,8 @@ export const users = [
     //   },
     //   avatarUrl: "/static/images/avatars/avatar_5.png",
     //   createdAt: 1554930000000,
-    //   email: "anje.keizer@devias.io",
-    //   name: "Anje Keizer",
+    //   workingTime: "anje.keizer@devias.io",
+    //   Name: "Anje Keizer",
     //   phone: "908-691-3242",
     // },
     // {
@@ -76,8 +58,8 @@ export const users = [
     //   },
     //   avatarUrl: "/static/images/avatars/avatar_6.png",
     //   createdAt: 1554757200000,
-    //   email: "clarke.gillebert@devias.io",
-    //   name: "Clarke Gillebert",
+    //   workingTime: "clarke.gillebert@devias.io",
+    //   Name: "Clarke Gillebert",
     //   phone: "972-333-4106",
     // },
     // {
@@ -90,8 +72,8 @@ export const users = [
     //   },
     //   avatarUrl: "/static/images/avatars/avatar_1.png",
     //   createdAt: 1554670800000,
-    //   email: "adam.denisov@devias.io",
-    //   name: "Adam Denisov",
+    //   workingTime: "adam.denisov@devias.io",
+    //   Name: "Adam Denisov",
     //   phone: "858-602-3409",
     // },
     // {
@@ -104,8 +86,8 @@ export const users = [
     //   },
     //   avatarUrl: "/static/images/avatars/avatar_7.png",
     //   createdAt: 1554325200000,
-    //   email: "ava.gregoraci@devias.io",
-    //   name: "Ava Gregoraci",
+    //   workingTime: "ava.gregoraci@devias.io",
+    //   Name: "Ava Gregoraci",
     //   phone: "415-907-2647",
     // },
     // {
@@ -118,8 +100,8 @@ export const users = [
     //   },
     //   avatarUrl: "/static/images/avatars/avatar_8.png",
     //   createdAt: 1523048400000,
-    //   email: "emilee.simchenko@devias.io",
-    //   name: "Emilee Simchenko",
+    //   workingTime: "emilee.simchenko@devias.io",
+    //   Name: "Emilee Simchenko",
     //   phone: "702-661-1654",
     // },
     // {
@@ -132,8 +114,8 @@ export const users = [
     //   },
     //   avatarUrl: "/static/images/avatars/avatar_9.png",
     //   createdAt: 1554702800000,
-    //   email: "kwak.seong.min@devias.io",
-    //   name: "Kwak Seong-Min",
+    //   workingTime: "kwak.seong.min@devias.io",
+    //   Name: "Kwak Seong-Min",
     //   phone: "313-812-8947",
     // },
     // {
@@ -146,8 +128,8 @@ export const users = [
     //   },
     //   avatarUrl: "/static/images/avatars/avatar_10.png",
     //   createdAt: 1522702800000,
-    //   email: "merrile.burgett@devias.io",
-    //   name: "Merrile Burgett",
+    //   workingTime: "merrile.burgett@devias.io",
+    //   Name: "Merrile Burgett",
     //   phone: "801-301-7894",
     // },
 ];
