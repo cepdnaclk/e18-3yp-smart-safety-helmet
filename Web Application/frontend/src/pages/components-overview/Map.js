@@ -52,7 +52,7 @@ const mapControls = {
 };
 
 const CircleOptions = {
-    strokeColor: '#FF0000',
+    strokeColor: '#FFFFFF',
     strokeOpacity: 0.3,
     strokeWeight: 2,
     fillColor: '#FF0000',
@@ -158,7 +158,7 @@ const Map = () => {
                                 <Marker
                                     key={id}
                                     position={position}
-                                    animation={window.google.maps.Animation.BOUNCE}
+                                    animation={temperature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
                                     onMouseOver={() => handleActiveMarker(id)}
                                     onMouseOut={() => setActiveMarker(null)}
                                 >
