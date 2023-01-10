@@ -68,15 +68,19 @@ export const UserListResults = ({ customers, ...rest }) => {
                                     />
                                 </TableCell> */}
                                 <TableCell>Name</TableCell>
-                                <TableCell>Working Time</TableCell>
+                                {/* <TableCell>Connection Status</TableCell> */}
+                                {/* <TableCell>Working Time</TableCell> */}
                                 <TableCell>Temperature</TableCell>
-                                <TableCell>Noise</TableCell>
+                                <TableCell>Noice_Level</TableCell>
                                 <TableCell>Vibration</TableCell>
+                                <TableCell>Gas Level</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
+                            {/* {customers.slice(0, limit).map((customer) => ( */}
                             {customers.slice(0, limit).map((customer) => (
-                                <TableRow hover key={customer.id} selected={selectedCustomerIds.indexOf(customer.id) !== -1}>
+                                // <TableRow hover key={customer.id} selected={selectedCustomerIds.indexOf(customer.id) !== -1}>
+                                <TableRow hover key={customer.name}>
                                     {/* <TableCell padding="checkbox">
                                         <Checkbox
                                             checked={selectedCustomerIds.indexOf(customer.id) !== -1}
@@ -91,18 +95,20 @@ export const UserListResults = ({ customers, ...rest }) => {
                                                 display: 'flex'
                                             }}
                                         >
-                                            <Avatar src={customer.avatarUrl} sx={{ mr: 2 }}>
-                                                {getInitials(customer.name)}
-                                            </Avatar>
+                                            {/* <Avatar src={customer.avatarUrl} sx={{ mr: 2 }}>
+                                                {getInitials(customer.Name)}
+                                            </Avatar> */}
                                             <Typography color="textPrimary" variant="body1">
-                                                {customer.name}
+                                                {customer.Name}
                                             </Typography>
                                         </Box>
                                     </TableCell>
-                                    <TableCell>{customer.email}</TableCell>
-                                    <TableCell>{customer.temperature}</TableCell>
-                                    <TableCell>{customer.noise}</TableCell>
-                                    <TableCell>{customer.vibration}</TableCell>
+                                    {/* <TableCell>{customer.connectionStatus}</TableCell> */}
+                                    {/* <TableCell>{customer.workingTime}</TableCell> */}
+                                    <TableCell>{customer.Tempurature}</TableCell>
+                                    <TableCell>{customer.Noice_Level}</TableCell>
+                                    <TableCell>{customer.Vibration_Level}</TableCell>
+                                    <TableCell>{customer.Gas_Level}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
