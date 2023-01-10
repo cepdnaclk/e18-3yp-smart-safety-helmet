@@ -26,7 +26,6 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 
 // project import
-// import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 // assets
@@ -34,7 +33,7 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-// import firebaseConfig from 'firebaseConfig';
+import config from 'firebaseConfig';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -66,17 +65,6 @@ const AuthLogin = () => {
         });
     };
 
-    // firebase app configuration
-    const firebaseConfig = {
-        apiKey: 'AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ',
-        authDomain: 'smart-helmet-74616.firebaseapp.com',
-        databaseURL: 'https://smart-helmet-74616-default-rtdb.firebaseio.com',
-        projectId: 'smart-helmet-74616',
-        storageBucket: 'smart-helmet-74616.appspot.com',
-        messagingSenderId: '20313702925',
-        appId: '1:20313702925:web:e293f804b8bbaaa6018b44'
-    };
-
     return (
         <>
             <Formik
@@ -98,7 +86,11 @@ const AuthLogin = () => {
                     //     setErrors({ submit: err.message });
                     //     setSubmitting(false);
                     // }
-                    firebase.initializeApp(firebaseConfig);
+
+                    //initialize the application
+                    firebase.initializeApp(config);
+
+                    //sign in with email and pssw
                     firebase
                         .auth()
                         .signInWithEmailAndPassword(values.email, values.password)
@@ -121,12 +113,13 @@ const AuthLogin = () => {
                                         .catch(function (error) {
                                             // an error occurred
                                             console.log(error.message);
+                                            showError(error.message);
                                         });
                                     // print the token
                                     // console.log(idToken);
                                 });
                         })
-                        .catch(function (error) {
+                        .catch((error) => {
                             // an error occurred
                             console.log(error.message);
                             showError(error.message);
@@ -135,6 +128,7 @@ const AuthLogin = () => {
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit}>
+                        <ToastContainer />
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <Stack spacing={1}>

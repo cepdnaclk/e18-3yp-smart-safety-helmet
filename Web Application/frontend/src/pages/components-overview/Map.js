@@ -1,24 +1,13 @@
 import { useEffect, useState } from 'react';
-import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, InfoWindow, Marker, useJsApiLoader, Circle, GroundOverlay } from '@react-google-maps/api';
 import { Box, Container } from '@mui/material';
-import axios from 'axios';
+// import axios from 'axios';
 
 //import assests
 import { useNavigate } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-
-// firebase app configuration
-const firebaseConfig = {
-    apiKey: 'AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ',
-    authDomain: 'smart-helmet-74616.firebaseapp.com',
-    databaseURL: 'https://smart-helmet-74616-default-rtdb.firebaseio.com',
-    projectId: 'smart-helmet-74616',
-    storageBucket: 'smart-helmet-74616.appspot.com',
-    messagingSenderId: '20313702925',
-    appId: '1:20313702925:web:e293f804b8bbaaa6018b44'
-};
+import config from 'firebaseConfig';
 
 const containerStyle = {
     width: 'auto',
@@ -29,30 +18,58 @@ const markers = [
     {
         id: 1,
         name: 'Jeewantha Udeshika',
-        position: { lat: 36.265095, lng: -115.236933 }
+        temperature: '29',
+        position: { lat: 6.928939, lng: 79.834294 }
     },
     {
         id: 2,
         name: 'Ishan Maduranga',
-        position: { lat: 36.265052, lng: -115.236364 }
+        temperature: '32',
+        position: { lat: 6.928896, lng: 79.833564 }
     },
     {
         id: 3,
         name: 'Tharindu Chamod',
-        position: { lat: 36.264941, lng: -115.236773 }
-    },
-    {
-        id: 4,
-        name: 'Lakshan Wijekoon',
-        position: { lat: 36.265248, lng: -115.237256 }
+        temperature: '24',
+        position: { lat: 6.929621, lng: 79.830603 }
     }
+    // {
+    //   id: 4,
+    //   name: "Lakshan Wijekoon",
+    //   position: { lat: 40.74, lng: -74.18},
+    // }
 ];
+
+//Map controls
 const mapControls = {
     panControl: false,
     mapTypeControl: false,
     streetViewControl: false,
     rotateControl: false,
-    fullscreenControl: false
+    fullscreenControl: false,
+    zoomControl: false,
+    scrollWheel: false
+};
+
+const CircleOptions = {
+    strokeColor: '#FFFFFF',
+    strokeOpacity: 0.3,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.1,
+    clickable: false,
+    draggable: false,
+    editable: false,
+    visible: true,
+    radius: 10,
+    zIndex: 1
+};
+
+const bounds = {
+    north: 6.941293,
+    south: 6.925233,
+    west: 79.822749,
+    east: 79.841718
 };
 
 const Map = () => {
@@ -77,25 +94,24 @@ const Map = () => {
             // });
 
             // console.log(res);
-            firebase.initializeApp(firebaseConfig);
-            const auth = getAuth();
-            const user = auth.currentUser;
+            firebase.initializeApp(config);
 
-            if (user) {
-                // console.log(user.uid);
+            //checks whether a user is successfully logged in or not
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    //if there is logged user already
+                    //navigate to dashboard
+                    navigate('/dashboard');
+                    // ...
+                } else {
+                    // User is signed out
+                    // No user is signed in.
+                    // console.log('No User Signed In');
 
-                //if there is logged user already
-                //navigate to dashboard
-                navigate('/dashboard');
-                // ...
-            } else {
-                // User is signed out
-                // No user is signed in.
-                // console.log('No User Signed In');
-
-                //if there is no logged user go to login
-                navigate('/login');
-            }
+                    //if there is no logged user go to login
+                    navigate('/login');
+                }
+            });
         }
 
         getData();
@@ -108,10 +124,8 @@ const Map = () => {
     };
 
     const { isLoaded } = useJsApiLoader({
-        // mapId: process.env.MAP_ID,
-        // googleMapsApiKey: process.env.MAPS_API_KEY // Add your API key
-        mapId: '728e8bcdc7d02a3e',
-        googleMapsApiKey: 'AIzaSyACvQ9R_hLNd41f-y3fdqWk-ph_-d5g44U' // Add your API key
+        mapId: process.env.REACT_APP_MAP_ID,
+        googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY
     });
 
     return isLoaded ? (
@@ -126,14 +140,37 @@ const Map = () => {
                 <Container maxWidth="xl">
                     <GoogleMap mapContainerStyle={containerStyle} zoom={50} options={mapControls} onLoad={handleOnLoad}>
                         {/* {<Marker position={center} />} */}
-                        {markers.map(({ id, name, position }) => (
-                            <Marker key={id} position={position} onClick={() => handleActiveMarker(id)}>
-                                {activeMarker === id ? (
-                                    <InfoWindow onCloseClick={() => setActiveMarker(null)}>
-                                        <div>{name}</div>
-                                    </InfoWindow>
-                                ) : null}
-                            </Marker>
+                        {markers.map(({ id, name, position, temperature }) => (
+                            // <Marker key={id} position={position} onClick={() => handleActiveMarker(id)}>
+                            //     {activeMarker === id ? (
+                            //         <InfoWindow onCloseClick={() => setActiveMarker(null)}>
+                            //             <div>{name}</div>
+                            //         </InfoWindow>
+                            //     ) : null}
+                            // </Marker>
+                            <>
+                                <Circle
+                                    // key={id}
+                                    center={position}
+                                    options={CircleOptions}
+                                    visible={temperature * 1 > 28 ? true : false}
+                                ></Circle>
+                                <Marker
+                                    key={id}
+                                    position={position}
+                                    animation={temperature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
+                                    onMouseOver={() => handleActiveMarker(id)}
+                                    onMouseOut={() => setActiveMarker(null)}
+                                >
+                                    {activeMarker === id ? (
+                                        <InfoWindow>
+                                            <div>{name}</div>
+                                        </InfoWindow>
+                                    ) : null}
+                                </Marker>
+
+                                <GroundOverlay key={'url'} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
+                            </>
                         ))}
                     </GoogleMap>
                 </Container>

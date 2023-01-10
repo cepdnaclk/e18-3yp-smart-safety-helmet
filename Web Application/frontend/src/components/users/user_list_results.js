@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { Avatar, Box, Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 
+//import assests
+import { useNavigate } from 'react-router-dom';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import config from 'firebaseConfig';
+
 export const UserListResults = ({ customers, ...rest }) => {
+    // Navigator
+    const navigate = useNavigate();
+
     const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(0);
@@ -16,6 +25,32 @@ export const UserListResults = ({ customers, ...rest }) => {
     const handlePageChange = (event, newPage) => {
         setPage(newPage);
     };
+
+    useEffect(() => {
+        async function getData() {
+            //initialize the App
+            firebase.initializeApp(config);
+
+            //checks whether a user is successfully logged in or not
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    //if there is logged user already
+                    //navigate to dashboard
+                    navigate('/users');
+                    // ...
+                } else {
+                    // User is signed out
+                    // No user is signed in.
+                    // console.log('No User Signed In');
+
+                    //if there is no logged user go to login
+                    navigate('/login');
+                }
+            });
+        }
+
+        getData();
+    }, []);
 
     return (
         <Card {...rest}>
