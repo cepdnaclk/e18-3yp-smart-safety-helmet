@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, InfoWindow, Marker, useJsApiLoader, Circle } from '@react-google-maps/api';
 import { Box, Container } from '@mui/material';
 // import axios from 'axios';
 
@@ -42,6 +42,20 @@ const mapControls = {
     streetViewControl: false,
     rotateControl: false,
     fullscreenControl: false
+};
+
+const CircleOptions = {
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.1,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.1,
+    clickable: false,
+    draggable: false,
+    editable: false,
+    visible: true,
+    radius: 5,
+    zIndex: 1
 };
 
 const Map = () => {
@@ -113,13 +127,20 @@ const Map = () => {
                     <GoogleMap mapContainerStyle={containerStyle} zoom={50} options={mapControls} onLoad={handleOnLoad}>
                         {/* {<Marker position={center} />} */}
                         {markers.map(({ id, name, position }) => (
-                            <Marker key={id} position={position} onClick={() => handleActiveMarker(id)}>
+                            // <Marker key={id} position={position} onClick={() => handleActiveMarker(id)}>
+                            //     {activeMarker === id ? (
+                            //         <InfoWindow onCloseClick={() => setActiveMarker(null)}>
+                            //             <div>{name}</div>
+                            //         </InfoWindow>
+                            //     ) : null}
+                            // </Marker>
+                            <Circle key={id} center={position} onClick={() => handleActiveMarker(id)} options={CircleOptions}>
                                 {activeMarker === id ? (
                                     <InfoWindow onCloseClick={() => setActiveMarker(null)}>
                                         <div>{name}</div>
                                     </InfoWindow>
                                 ) : null}
-                            </Marker>
+                            </Circle>
                         ))}
                     </GoogleMap>
                 </Container>
