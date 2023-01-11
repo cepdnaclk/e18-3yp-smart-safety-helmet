@@ -13,15 +13,19 @@ const ComponentUsers = () => {
 
     useEffect(() => {
         async function getData() {
-            const res = await axios({
-                method: 'GET',
-                url: 'https://us-central1-smart-helmet-74616.cloudfunctions.net/appFunc/getSensors'
-            });
+            try {
+                const res = await axios({
+                    method: 'GET',
+                    url: 'https://us-central1-smart-helmet-74616.cloudfunctions.net/appFunc/getSensors'
+                });
 
-            // console.log(res.data);
-            setState({ ...state, result: res.data });
+                // console.log(res.data);
+                setState({ ...state, result: res.data });
 
-            // console.log(state.result);
+                // console.log(state.result);
+            } catch (err) {
+                console.log(err.response);
+            }
         }
 
         getData();

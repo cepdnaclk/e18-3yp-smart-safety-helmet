@@ -3,12 +3,13 @@ import { Link as RouterLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 // material-ui
 import {
     Button,
     Checkbox,
-    Divider,
+    // Divider,
     FormControlLabel,
     FormHelperText,
     Grid,
@@ -65,6 +66,30 @@ const AuthLogin = () => {
         });
     };
 
+    //If the user has already signed in no need to load the login page again
+    //Just load the dashboard
+    useEffect(() => {
+        async function getData() {
+            // console.log(res);
+            firebase.initializeApp(config);
+
+            //checks whether a user is successfully logged in or not
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    //if there is logged user already
+                    //navigate to dashboard
+                    navigate('/dashboard');
+                    // ...
+                } else {
+                    //if there is no logged user go to login
+                    navigate('/login');
+                }
+            });
+        }
+
+        getData();
+    }, []);
+
     return (
         <>
             <Formik
@@ -78,14 +103,14 @@ const AuthLogin = () => {
                     password: Yup.string().max(255).required('Password is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    // try {
-                    //     setStatus({ success: false });
-                    //     setSubmitting(false);
-                    // } catch (err) {
-                    //     setStatus({ success: false });
-                    //     setErrors({ submit: err.message });
-                    //     setSubmitting(false);
-                    // }
+                    try {
+                        setStatus({ success: false });
+                        setSubmitting(false);
+                    } catch (err) {
+                        setStatus({ success: false });
+                        setErrors({ submit: err.message });
+                        setSubmitting(false);
+                    }
 
                     //initialize the application
                     firebase.initializeApp(config);

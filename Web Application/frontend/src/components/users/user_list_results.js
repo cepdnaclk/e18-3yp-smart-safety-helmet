@@ -71,8 +71,8 @@ export const UserListResults = ({ customers, ...rest }) => {
                                 {/* <TableCell>Connection Status</TableCell> */}
                                 {/* <TableCell>Working Time</TableCell> */}
                                 <TableCell>Temperature</TableCell>
-                                <TableCell>Noice_Level</TableCell>
-                                <TableCell>Vibration</TableCell>
+                                <TableCell>Noise Level</TableCell>
+                                <TableCell>Vibration Level</TableCell>
                                 <TableCell>Gas Level</TableCell>
                             </TableRow>
                         </TableHead>
