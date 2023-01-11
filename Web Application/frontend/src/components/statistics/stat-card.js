@@ -18,14 +18,14 @@ export const StatCard = ({ stat, ...rest }) => (
                     pb: 3
                 }}
             >
-                <Avatar alt="Stat" src={stat.media} variant="square" />
+                <Avatar src={`/statistics/${stat.Title}.svg`} variant="square" />
             </Box>
 
             <Typography align="center" color="textPrimary" gutterBottom variant="h5" fontSize={25}>
-                {stat.title}
+                {stat.Title}
             </Typography>
             <Typography align="center" color="textPrimary" variant="h3" fontSize={20} fontStyle="italic" sx={{ color: '#0000FF' }}>
-                {stat.description}
+                {stat.value}
             </Typography>
         </CardContent>
     </Card>
