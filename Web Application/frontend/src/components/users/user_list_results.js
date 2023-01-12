@@ -5,6 +5,7 @@ import { Avatar, Box, Card, Table, TableBody, TableCell, TableHead, TablePaginat
 import { getInitials } from '../../utils/get-initials';
 
 //import assests
+import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -71,16 +72,16 @@ export const UserListResults = ({ customers, ...rest }) => {
                                 {/* <TableCell>Connection Status</TableCell> */}
                                 {/* <TableCell>Working Time</TableCell> */}
                                 <TableCell>Temperature</TableCell>
-                                <TableCell>Noice_Level</TableCell>
-                                <TableCell>Vibration</TableCell>
+                                <TableCell>Noise Level</TableCell>
+                                <TableCell>Vibration Level</TableCell>
                                 <TableCell>Gas Level</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {/* {customers.slice(0, limit).map((customer) => ( */}
-                            {customers.slice(0, limit).map((customer) => (
-                                // <TableRow hover key={customer.id} selected={selectedCustomerIds.indexOf(customer.id) !== -1}>
-                                <TableRow hover key={customer.name}>
+                            {customers.slice(page * limit, page * limit + limit).map((customer) => (
+                                <TableRow hover key={uuid()} selected={selectedCustomerIds.indexOf(customer.id) !== -1}>
+                                    {/* <TableRow hover key={customer.name}> */}
                                     {/* <TableCell padding="checkbox">
                                         <Checkbox
                                             checked={selectedCustomerIds.indexOf(customer.id) !== -1}

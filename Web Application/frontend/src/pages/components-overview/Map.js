@@ -4,6 +4,7 @@ import { Box, Container } from '@mui/material';
 // import axios from 'axios';
 
 //import assests
+import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -85,14 +86,15 @@ const Map = () => {
         setActiveMarker(marker);
     };
 
+    const [time, setTime] = useState({
+        response: 1
+    });
+
+    //delay function
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
     useEffect(() => {
         async function getData() {
-            // Send the application data to the backend
-            // const res = await axios({
-            //     method: 'GET',
-            //     url: 'https://dog.ceo/api/breeds/image/random'
-            // });
-
             // console.log(res);
             firebase.initializeApp(config);
 
@@ -112,6 +114,11 @@ const Map = () => {
                     navigate('/login');
                 }
             });
+
+            await delay(5000);
+            setTime({ ...time, response: !time.response });
+
+            // console.log('Map loaded');
         }
 
         getData();
@@ -150,7 +157,7 @@ const Map = () => {
                             // </Marker>
                             <>
                                 <Circle
-                                    // key={id}
+                                    // key={uuid()}
                                     center={position}
                                     options={CircleOptions}
                                     visible={temperature * 1 > 28 ? true : false}
