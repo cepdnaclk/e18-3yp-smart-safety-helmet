@@ -14,6 +14,11 @@ import axios from '../../../node_modules/axios/index';
 const Page = () => {
     // Navigator
     const navigate = useNavigate();
+
+    const [time, setTime] = useState({
+        response: 1
+    });
+
     const [state, setState] = useState({
         result: []
     });
@@ -21,6 +26,9 @@ const Page = () => {
     const [workerCount, setWorkerCount] = useState({
         count: {}
     });
+
+    //delay function
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     useEffect(() => {
         async function getData() {
@@ -58,6 +66,9 @@ const Page = () => {
                     navigate('/login');
                 }
             });
+
+            await delay(5000);
+            setTime({ ...time, response: !time.response });
         }
 
         getData();

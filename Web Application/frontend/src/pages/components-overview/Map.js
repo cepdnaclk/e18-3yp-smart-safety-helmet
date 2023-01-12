@@ -85,14 +85,15 @@ const Map = () => {
         setActiveMarker(marker);
     };
 
+    const [time, setTime] = useState({
+        response: 1
+    });
+
+    //delay function
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
     useEffect(() => {
         async function getData() {
-            // Send the application data to the backend
-            // const res = await axios({
-            //     method: 'GET',
-            //     url: 'https://dog.ceo/api/breeds/image/random'
-            // });
-
             // console.log(res);
             firebase.initializeApp(config);
 
@@ -112,6 +113,11 @@ const Map = () => {
                     navigate('/login');
                 }
             });
+
+            await delay(5000);
+            setTime({ ...time, response: !time.response });
+
+            // console.log('user');
         }
 
         getData();

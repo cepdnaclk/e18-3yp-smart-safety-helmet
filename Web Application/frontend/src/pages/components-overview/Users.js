@@ -12,12 +12,21 @@ import { Search as SearchIcon } from '../../assets/icons/search';
 const ComponentUsers = () => {
     const navigate = useNavigate();
 
+    const [time, setTime] = useState({
+        response: 1
+    });
+
     const [state, setState] = useState({
         result: []
     });
+
     const handleClick = (e) => {
         navigate('/adduser');
     };
+
+    //delay function
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
     useEffect(() => {
         async function getData() {
             try {
@@ -26,16 +35,21 @@ const ComponentUsers = () => {
                     url: 'https://us-central1-smart-helmet-74616.cloudfunctions.net/appFunc/getSensors'
                 });
 
-                // console.log(res.data);
+                console.log(res.data);
                 setState({ ...state, result: res.data });
 
                 // console.log(state.result);
             } catch (err) {
                 console.log(err.response);
             }
+
+            await delay(5000);
+            setTime({ ...time, response: !time.response });
         }
 
         getData();
+
+        //just replace the empty array with time to refresh for every 5 seconds
     }, []);
 
     return (
