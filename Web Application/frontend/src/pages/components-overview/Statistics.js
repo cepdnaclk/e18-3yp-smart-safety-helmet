@@ -51,7 +51,7 @@ const Page = () => {
                     //remove the last element from the object array
                     // const original = res.data;
                     // original.splice(-1);
-
+                    // console.log(res.data);
                     setState({ ...state, result: res.data });
 
                     //get the worker count
@@ -69,6 +69,7 @@ const Page = () => {
 
             await delay(5000);
             setTime({ ...time, response: !time.response });
+            // console.log('Stats loaded');
         }
 
         getData();

@@ -45,6 +45,8 @@ const ComponentUsers = () => {
 
             await delay(5000);
             setTime({ ...time, response: !time.response });
+
+            // console.log('Users loaded');
         }
 
         getData();

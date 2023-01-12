@@ -117,11 +117,11 @@ const Map = () => {
             await delay(5000);
             setTime({ ...time, response: !time.response });
 
-            // console.log('user');
+            console.log('Map loaded');
         }
 
         getData();
-    }, []);
+    }, [time]);
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
