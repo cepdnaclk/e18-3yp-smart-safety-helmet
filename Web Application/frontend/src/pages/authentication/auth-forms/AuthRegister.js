@@ -59,6 +59,9 @@ const AuthRegister = () => {
         setLevel(strengthColor(temp));
     };
 
+    //delay function
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
     const showSuccess = (values) => {
         const msg = `Username : ${values.username} Password : ${values.password}`;
 
@@ -156,6 +159,7 @@ const AuthRegister = () => {
                     }
 
                     // console.log(values);
+                    firebase.initializeApp(config);
                     try {
                         const res = await axios({
                             method: 'POST',
@@ -163,11 +167,20 @@ const AuthRegister = () => {
                             data: values
                         });
                         console.log(res);
+
+                        //show username and password of the user added
                         showSuccess(values);
+
+                        //wait 10s
+                        await delay(10000);
+
+                        //go to dashboard
                         navigate('/dashboard');
                     } catch (err) {
-                        showError(err);
+                        console.log(err.response.data);
+                        showError(err.response.data);
                     }
+                    //initialize the application
                 }}
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (

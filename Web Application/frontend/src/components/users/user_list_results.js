@@ -5,6 +5,7 @@ import { Avatar, Box, Card, Table, TableBody, TableCell, TableHead, TablePaginat
 import { getInitials } from '../../utils/get-initials';
 
 //import assests
+import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -79,8 +80,8 @@ export const UserListResults = ({ customers, ...rest }) => {
                         <TableBody>
                             {/* {customers.slice(0, limit).map((customer) => ( */}
                             {customers.slice(0, limit).map((customer) => (
-                                // <TableRow hover key={customer.id} selected={selectedCustomerIds.indexOf(customer.id) !== -1}>
-                                <TableRow hover key={customer.name}>
+                                <TableRow hover key={uuid()} selected={selectedCustomerIds.indexOf(customer.id) !== -1}>
+                                    {/* <TableRow hover key={customer.name}> */}
                                     {/* <TableCell padding="checkbox">
                                         <Checkbox
                                             checked={selectedCustomerIds.indexOf(customer.id) !== -1}

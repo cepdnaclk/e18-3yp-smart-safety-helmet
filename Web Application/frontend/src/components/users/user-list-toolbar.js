@@ -1,5 +1,4 @@
 import { Box, Button, Card, CardContent, TextField, InputAdornment, SvgIcon, Typography } from '@mui/material';
-import { Navigate } from '../../../node_modules/react-router-dom/dist/index';
 import { Search as SearchIcon } from '../../assets/icons/search';
 
 export const UserListToolBar = (props) => {
