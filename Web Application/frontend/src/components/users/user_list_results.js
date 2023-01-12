@@ -79,7 +79,7 @@ export const UserListResults = ({ customers, ...rest }) => {
                         </TableHead>
                         <TableBody>
                             {/* {customers.slice(0, limit).map((customer) => ( */}
-                            {customers.slice(0, limit).map((customer) => (
+                            {customers.slice(page * limit, page * limit + limit).map((customer) => (
                                 <TableRow hover key={uuid()} selected={selectedCustomerIds.indexOf(customer.id) !== -1}>
                                     {/* <TableRow hover key={customer.name}> */}
                                     {/* <TableCell padding="checkbox">
