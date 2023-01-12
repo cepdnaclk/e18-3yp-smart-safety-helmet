@@ -176,7 +176,7 @@ const Map = () => {
                                     ) : null}
                                 </Marker>
 
-                                <GroundOverlay key={uuid()} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
+                                <GroundOverlay key={'url'} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
                             </>
                         ))}
                     </GoogleMap>
