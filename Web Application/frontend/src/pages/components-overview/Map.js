@@ -116,12 +116,12 @@ const Map = () => {
 
             await delay(5000);
             setTime({ ...time, response: !time.response });
-            markers[0].position.lat = markers[0].position.lat + 1;
-            console.log('Map loaded');
+
+            // console.log('Map loaded');
         }
 
         getData();
-    }, [time]);
+    }, []);
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
