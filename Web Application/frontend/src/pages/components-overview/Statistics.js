@@ -109,7 +109,7 @@ const Page = () => {
                                         >
                                             {stat.Title !== 'Maximum Temperature' && stat.Title !== 'Minimum Temperature'
                                                 ? `safe : ${stat.value}`
-                                                : `${stat.value} C`}
+                                                : `${stat.value} \u00b0C`}
                                         </Typography>
                                         <Typography
                                             align="center"
