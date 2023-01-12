@@ -163,7 +163,7 @@ const AuthRegister = () => {
                     try {
                         const res = await axios({
                             method: 'POST',
-                            url: 'https://us-central1-smart-helmet-74616.cloudfunctions.net/appFunc/addUser',
+                            url: `${process.env.REACT_APP_API_URL}/addUser`,
                             data: values
                         });
                         console.log(res);

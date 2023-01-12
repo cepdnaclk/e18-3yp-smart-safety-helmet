@@ -43,7 +43,7 @@ const Page = () => {
                     navigate('/statistics');
                     const res = await axios({
                         method: 'GET',
-                        url: 'https://us-central1-smart-helmet-74616.cloudfunctions.net/appFunc/maxTemp'
+                        url: `${process.env.REACT_APP_API_URL}/maxTemp`
                     });
 
                     // console.log(res.data.slice(-1));

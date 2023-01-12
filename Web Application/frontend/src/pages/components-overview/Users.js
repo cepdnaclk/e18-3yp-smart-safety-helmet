@@ -32,7 +32,7 @@ const ComponentUsers = () => {
             try {
                 const res = await axios({
                     method: 'GET',
-                    url: 'https://us-central1-smart-helmet-74616.cloudfunctions.net/appFunc/getSensors'
+                    url: `${process.env.REACT_APP_API_URL}/getSensors`
                 });
 
                 console.log(res.data);

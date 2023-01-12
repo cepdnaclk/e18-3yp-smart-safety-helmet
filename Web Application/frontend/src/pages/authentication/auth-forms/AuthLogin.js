@@ -127,7 +127,7 @@ const AuthLogin = () => {
                                 .then(function (idToken) {
                                     // send the ID token to the backend
                                     axios
-                                        .post('https://us-central1-smart-helmet-74616.cloudfunctions.net/appFunc/verifyToken', { idToken })
+                                        .post(`${process.env.REACT_APP_API_URL}/verifyToken`, { idToken })
                                         .then(function (response) {
                                             // ID token was verified by the backend
                                             console.log(response.data);

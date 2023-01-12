@@ -4,6 +4,7 @@ import { Box, Container } from '@mui/material';
 // import axios from 'axios';
 
 //import assests
+import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -156,7 +157,7 @@ const Map = () => {
                             // </Marker>
                             <>
                                 <Circle
-                                    // key={id}
+                                    // key={uuid()}
                                     center={position}
                                     options={CircleOptions}
                                     visible={temperature * 1 > 28 ? true : false}
@@ -175,7 +176,7 @@ const Map = () => {
                                     ) : null}
                                 </Marker>
 
-                                <GroundOverlay key={'url'} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
+                                <GroundOverlay key={uuid()} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
                             </>
                         ))}
                     </GoogleMap>
