@@ -1,5 +1,6 @@
 import { db } from "../Auth/firebase.js";
 import admin from "firebase-admin";
+import { v4 as uuid } from "uuid";
 
 let authorized = false;
 
@@ -82,7 +83,7 @@ export const getSensorData = (req, res) => {
         return res.status(404).send("There is no such user");
       } else {
         snapshot.forEach((doc) => {
-          const name = doc.id;
+          const name = doc.get("name");
           const tempurature = doc.get("Tempurature");
           const vibration = doc.get("Vibration_Level");
           const noise = doc.get("Noice_Level");
@@ -91,6 +92,7 @@ export const getSensorData = (req, res) => {
           const lng = doc.get("Longitude");
 
           const data = {
+            id: uuid(),
             Name: name,
             Tempurature: tempurature,
             Vibration_Level: vibration,

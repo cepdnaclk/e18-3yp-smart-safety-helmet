@@ -161,7 +161,7 @@ const Map = () => {
                 <Container maxWidth="xl">
                     <GoogleMap mapContainerStyle={containerStyle} zoom={50} options={mapControls} onLoad={handleOnLoad}>
                         {/* {<Marker position={center} />} */}
-                        {markers.result.map(({ id = uuid(), Name, Position, Tempurature }) => (
+                        {markers.result.map((marker) => (
                             // <Marker key={id} position={position} onClick={() => handleActiveMarker(id)}>
                             //     {activeMarker === id ? (
                             //         <InfoWindow onCloseClick={() => setActiveMarker(null)}>
@@ -171,26 +171,26 @@ const Map = () => {
                             // </Marker>
                             <>
                                 <Circle
-                                    // key={id}
-                                    center={Position}
+                                    // key={uuid()}
+                                    center={marker.Position}
                                     options={CircleOptions}
-                                    visible={Tempurature * 1 > 28 ? true : false}
+                                    visible={marker.Tempurature * 1 > 28 ? true : false}
                                 ></Circle>
                                 <Marker
-                                    key={id}
-                                    position={Position}
-                                    animation={Tempurature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
-                                    onMouseOver={() => handleActiveMarker(id)}
+                                    key={marker.id}
+                                    position={marker.Position}
+                                    animation={marker.Tempurature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
+                                    onMouseOver={() => handleActiveMarker(marker.id)}
                                     onMouseOut={() => setActiveMarker(null)}
                                 >
-                                    {activeMarker === id ? (
+                                    {activeMarker === marker.id ? (
                                         <InfoWindow>
-                                            <div>{Name}</div>
+                                            <div>{marker.Name}</div>
                                         </InfoWindow>
                                     ) : null}
                                 </Marker>
 
-                                <GroundOverlay key={'url'} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
+                                <GroundOverlay key={uuid()} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
                             </>
                         ))}
                     </GoogleMap>
