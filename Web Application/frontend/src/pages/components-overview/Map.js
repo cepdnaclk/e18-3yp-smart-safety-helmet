@@ -81,6 +81,10 @@ const Map = () => {
         result: []
     });
 
+    const [currentcenter, setCurrentCenter] = useState({
+        result: { lat: 6.933966, lng: 79.832577 }
+    });
+
     const handleActiveMarker = (marker) => {
         if (marker === activeMarker) {
             return;
@@ -171,7 +175,7 @@ const Map = () => {
                         zoom={17}
                         options={mapControls}
                         onLoad={handleOnLoad}
-                        center={{ lat: 6.933966, lng: 79.832577 }}
+                        center={currentcenter.result}
                     >
                         {/* {<Marker position={center} />} */}
                         {state.result.map((marker) => (
@@ -198,7 +202,12 @@ const Map = () => {
                                         onMouseOut={() => setActiveMarker(null)}
                                     >
                                         {activeMarker === (marker.id != undefined ? marker.id : marker.Name) ? (
-                                            <InfoWindowF>
+                                            <InfoWindowF
+                                                onCloseClick={() => {
+                                                    setActiveMarker(null);
+                                                    setCurrentCenter(position);
+                                                }}
+                                            >
                                                 <div>{marker.Name}</div>
                                             </InfoWindowF>
                                         ) : null}
