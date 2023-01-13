@@ -4,7 +4,7 @@ import { Box, Container } from '@mui/material';
 import axios from 'axios';
 
 //import assests
-// import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -187,7 +187,7 @@ const Map = () => {
                                 ></Circle>
                                 {isMounted && (
                                     <MarkerF
-                                        key={marker.id}
+                                        key={marker.id != undefined ? marker.id : marker.name}
                                         position={marker.position}
                                         animation={marker.temperature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
                                         onMouseOver={() => handleActiveMarker(marker.id)}
