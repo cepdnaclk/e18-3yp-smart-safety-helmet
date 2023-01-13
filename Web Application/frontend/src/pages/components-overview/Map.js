@@ -4,7 +4,7 @@ import { Box, Container } from '@mui/material';
 import axios from 'axios';
 
 //import assests
-import { v4 as uuid } from 'uuid';
+// import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -15,26 +15,26 @@ const containerStyle = {
     height: '480px'
 };
 
-const markers = [
-    {
-        id: 1,
-        Name: 'Jeewantha Udeshika',
-        Tempurature: '29',
-        position: { lat: 6.928939, lng: 79.834294 }
-    }
-    // {
-    //     id: 2,
-    //     name: 'Ishan Maduranga',
-    //     temperature: '32',
-    //     position: { lat: 6.928896, lng: 79.833564 }
-    // },
-    // {
-    //     id: 3,
-    //     name: 'Tharindu Chamod',
-    //     temperature: '24',
-    //     position: { lat: 6.929621, lng: 79.830603 }
-    // }
-];
+// const markers = [
+//     {
+//         id: 1,
+//         Name: 'Jeewantha Udeshika',
+//         Tempurature: '29',
+//         position: { lat: 6.928939, lng: 79.834294 }
+//     },
+//     {
+//         id: 2,
+//         name: 'Ishan Maduranga',
+//         temperature: '32',
+//         position: { lat: 6.928896, lng: 79.833564 }
+//     },
+//     {
+//         id: 3,
+//         name: 'Tharindu Chamod',
+//         temperature: '24',
+//         position: { lat: 6.929621, lng: 79.830603 }
+//     }
+// ];
 
 //Map controls
 const mapControls = {
@@ -164,7 +164,7 @@ const Map = () => {
                 <Container maxWidth="xl">
                     <GoogleMap
                         mapContainerStyle={containerStyle}
-                        zoom={5}
+                        zoom={15}
                         options={mapControls}
                         onLoad={handleOnLoad}
                         center={{ lat: 6.933966, lng: 79.832577 }}
