@@ -108,7 +108,7 @@ class _MainScrren extends State<MainScreen> {
     updateState();
 
     // Check whether bluetooth device is connected
-    if (widget.server.isConnected) {
+    if (widget.server.isBonded) {
       setState(() {
         bluetoothStatus = true;
       });
@@ -209,10 +209,6 @@ class _MainScrren extends State<MainScreen> {
 
         // Update state when data is received
         // bluetoothStatus = !bluetoothStatus;
-        // temperature = dataString.trim().split('|').elementAt(0);
-        // noiseStatus = dataString.trim().split('|').elementAt(1);
-        // gasStatus = dataString.trim().split('|').elementAt(2);
-        // vibrationStatus = dataString.trim().split('|').elementAt(3);
 
         // Adding sensor data to the list
         dataList.add(backspacesCounter > 0
@@ -260,7 +256,7 @@ class _MainScrren extends State<MainScreen> {
   // Function to check and set bluetooth state
   void setBluetoothState() {
     // if device is connected
-    if (widget.server.isConnected) {
+    if (widget.server.isBonded) {
       setState(() {
         bluetoothStatus = true;
       });
@@ -809,7 +805,7 @@ class _MainScrren extends State<MainScreen> {
 
   // Callback function to update state in every 5 second
   // initialize duration
-  final updateDuration = const Duration(seconds: 5);
+  final updateDuration = const Duration(seconds: 1);
 
   // Function to update State
   void updateState() {
@@ -825,7 +821,7 @@ class _MainScrren extends State<MainScreen> {
 
     // Set states (After analysing data recieved from bluetooth module)
     setState(() {
-      bluetoothStatus = !bluetoothStatus;
+      bluetoothStatus = bluetoothStatus;
       // below state updates when data is recieved
       // temperature = sensorData.split("/").elementAt(0);
       // noiseStatus = sensorData.split("/").elementAt(1);
