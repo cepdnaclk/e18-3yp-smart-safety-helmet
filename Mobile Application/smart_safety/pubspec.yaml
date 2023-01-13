@@ -67,6 +67,7 @@ flutter:
   assets:
     - images/mobile_top.png
     - images/mobile_top.jpg
+    - images/logo.png
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
