@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, TextField, InputAdornment, SvgIcon, Typography } from '@mui/material';
 import { Search as SearchIcon } from '../../assets/icons/search';
 
-export const UserListToolBar = (props) => (
+export const UserListToolBar = (props) => {
     <Box {...props}>
         <Box
             sx={{
@@ -12,9 +12,9 @@ export const UserListToolBar = (props) => (
                 m: -1
             }}
         >
-            <Typography sx={{ m: 1 }} variant="h4">
+            {/* <Typography sx={{ m: 1 }} variant="h4">
                 Users
-            </Typography>
+            </Typography> */}
             <Box sx={{ m: 1 }}>
                 <Button color="primary" variant="contained">
                     Add Users
@@ -43,5 +43,5 @@ export const UserListToolBar = (props) => (
                 </CardContent>
             </Card>
         </Box>
-    </Box>
-);
+    </Box>;
+};

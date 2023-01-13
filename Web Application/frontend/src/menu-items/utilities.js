@@ -71,14 +71,14 @@ const utilities = {
             id: 'util-statistics',
             title: 'Statistics',
             type: 'item',
-            url: '/typography',
+            url: '/statistics',
             icon: icons.StarOutlined
         },
         {
             id: 'util-settings',
             title: 'Settings',
             type: 'item',
-            url: '/typography',
+            url: '/settings',
             icon: icons.SettingOutlined
         }
     ]

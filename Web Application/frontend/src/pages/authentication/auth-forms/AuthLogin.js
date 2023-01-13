@@ -1,11 +1,15 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 // material-ui
 import {
     Button,
     Checkbox,
-    Divider,
+    // Divider,
     FormControlLabel,
     FormHelperText,
     Grid,
@@ -23,7 +27,6 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 
 // project import
-import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 // assets
@@ -31,10 +34,14 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import config from 'firebaseConfig';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const AuthLogin = () => {
+    // Navigator
+    const navigate = useNavigate();
+
     const [checked, setChecked] = React.useState(false);
 
     const [showPassword, setShowPassword] = React.useState(false);
@@ -46,18 +53,42 @@ const AuthLogin = () => {
         event.preventDefault();
     };
 
-    // firebase app configuration
-    const firebaseConfig = {
-        apiKey: 'AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ',
-        authDomain: 'smart-helmet-74616.firebaseapp.com',
-        databaseURL: 'https://smart-helmet-74616-default-rtdb.firebaseio.com',
-        projectId: 'smart-helmet-74616',
-        storageBucket: 'smart-helmet-74616.appspot.com',
-        messagingSenderId: '20313702925',
-        appId: '1:20313702925:web:e293f804b8bbaaa6018b44'
+    const showError = (err) => {
+        toast.error(err, {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+        });
     };
 
-    // firebase.initializeApp(firebaseConfig);
+    //If the user has already signed in no need to load the login page again
+    //Just load the dashboard
+    useEffect(() => {
+        async function getData() {
+            // console.log(res);
+            firebase.initializeApp(config);
+
+            //checks whether a user is successfully logged in or not
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    //if there is logged user already
+                    //navigate to dashboard
+                    navigate('/dashboard');
+                    // ...
+                } else {
+                    //if there is no logged user go to login
+                    navigate('/login');
+                }
+            });
+        }
+
+        getData();
+    }, []);
 
     return (
         <>
@@ -72,15 +103,19 @@ const AuthLogin = () => {
                     password: Yup.string().max(255).required('Password is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    // try {
-                    //     setStatus({ success: false });
-                    //     setSubmitting(false);
-                    // } catch (err) {
-                    //     setStatus({ success: false });
-                    //     setErrors({ submit: err.message });
-                    //     setSubmitting(false);
-                    // }
-                    firebase.initializeApp(firebaseConfig);
+                    try {
+                        setStatus({ success: false });
+                        setSubmitting(false);
+                    } catch (err) {
+                        setStatus({ success: false });
+                        setErrors({ submit: err.message });
+                        setSubmitting(false);
+                    }
+
+                    //initialize the application
+                    firebase.initializeApp(config);
+
+                    //sign in with email and pssw
                     firebase
                         .auth()
                         .signInWithEmailAndPassword(values.email, values.password)
@@ -92,26 +127,33 @@ const AuthLogin = () => {
                                 .then(function (idToken) {
                                     // send the ID token to the backend
                                     axios
-                                        .post('http://127.0.0.1:5001/smart-helmet-74616/us-central1/appFunc/verifyToken', { idToken })
+                                        .post(`${process.env.REACT_APP_API_URL}/verifyToken`, { idToken })
                                         .then(function (response) {
                                             // ID token was verified by the backend
-                                            console.log(response);
+                                            console.log(response.data);
+
+                                            //goto dashboard page
+                                            navigate('/dashboard');
                                         })
                                         .catch(function (error) {
                                             // an error occurred
                                             console.log(error.message);
+                                            showError(error.message);
                                         });
-
-                                    console.log(idToken);
+                                    // print the token
+                                    // console.log(idToken);
                                 });
                         })
-                        .catch(function (error) {
+                        .catch((error) => {
                             // an error occurred
+                            console.log(error.message);
+                            showError(error.message);
                         });
                 }}
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit}>
+                        <ToastContainer />
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <Stack spacing={1}>
