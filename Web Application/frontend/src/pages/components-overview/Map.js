@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GoogleMap, InfoWindow, Marker, useJsApiLoader, Circle, GroundOverlay } from '@react-google-maps/api';
 import { Box, Container } from '@mui/material';
-// import axios from 'axios';
+import axios from 'axios';
 
 //import assests
 import { v4 as uuid } from 'uuid';
@@ -15,31 +15,26 @@ const containerStyle = {
     height: '480px'
 };
 
-const markers = [
-    {
-        id: 1,
-        name: 'Jeewantha Udeshika',
-        temperature: '29',
-        position: { lat: 6.928939, lng: 79.834294 }
-    },
-    {
-        id: 2,
-        name: 'Ishan Maduranga',
-        temperature: '32',
-        position: { lat: 6.928896, lng: 79.833564 }
-    },
-    {
-        id: 3,
-        name: 'Tharindu Chamod',
-        temperature: '24',
-        position: { lat: 6.929621, lng: 79.830603 }
-    }
-    // {
-    //   id: 4,
-    //   name: "Lakshan Wijekoon",
-    //   position: { lat: 40.74, lng: -74.18},
-    // }
-];
+// const markers = [
+//     {
+//         id: 1,
+//         name: 'Jeewantha Udeshika',
+//         temperature: '29',
+//         position: { lat: 6.928939, lng: 79.834294 }
+//     },
+//     {
+//         id: 2,
+//         name: 'Ishan Maduranga',
+//         temperature: '32',
+//         position: { lat: 6.928896, lng: 79.833564 }
+//     },
+//     {
+//         id: 3,
+//         name: 'Tharindu Chamod',
+//         temperature: '24',
+//         position: { lat: 6.929621, lng: 79.830603 }
+//     }
+// ];
 
 //Map controls
 const mapControls = {
@@ -79,6 +74,11 @@ const Map = () => {
 
     const [activeMarker, setActiveMarker] = useState(null);
 
+    //get the markers
+    const [markers, setMarkers] = useState({
+        result: []
+    });
+
     const handleActiveMarker = (marker) => {
         if (marker === activeMarker) {
             return;
@@ -99,11 +99,25 @@ const Map = () => {
             firebase.initializeApp(config);
 
             //checks whether a user is successfully logged in or not
-            firebase.auth().onAuthStateChanged((user) => {
+            firebase.auth().onAuthStateChanged(async (user) => {
                 if (user) {
                     //if there is logged user already
                     //navigate to dashboard
                     navigate('/dashboard');
+                    try {
+                        const res = await axios({
+                            method: 'GET',
+                            url: `${process.env.REACT_APP_API_URL}/getSensors`
+                        });
+
+                        console.log(res.data);
+                        setMarkers({ ...markers, result: res.data });
+
+                        // console.log(state.result);
+                    } catch (err) {
+                        console.log(err.response);
+                    }
+
                     // ...
                 } else {
                     // User is signed out
@@ -126,7 +140,7 @@ const Map = () => {
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
-        markers.forEach(({ position }) => bounds.extend(position));
+        markers.result.forEach(({ Position }) => bounds.extend(Position));
         map.fitBounds(bounds);
     };
 
@@ -147,7 +161,7 @@ const Map = () => {
                 <Container maxWidth="xl">
                     <GoogleMap mapContainerStyle={containerStyle} zoom={50} options={mapControls} onLoad={handleOnLoad}>
                         {/* {<Marker position={center} />} */}
-                        {markers.map(({ id, name, position, temperature }) => (
+                        {markers.result.map(({ id = uuid(), Name, Position, Tempurature }) => (
                             // <Marker key={id} position={position} onClick={() => handleActiveMarker(id)}>
                             //     {activeMarker === id ? (
                             //         <InfoWindow onCloseClick={() => setActiveMarker(null)}>
@@ -157,21 +171,21 @@ const Map = () => {
                             // </Marker>
                             <>
                                 <Circle
-                                    // key={uuid()}
-                                    center={position}
+                                    // key={id}
+                                    center={Position}
                                     options={CircleOptions}
-                                    visible={temperature * 1 > 28 ? true : false}
+                                    visible={Tempurature * 1 > 28 ? true : false}
                                 ></Circle>
                                 <Marker
                                     key={id}
-                                    position={position}
-                                    animation={temperature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
+                                    position={Position}
+                                    animation={Tempurature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
                                     onMouseOver={() => handleActiveMarker(id)}
                                     onMouseOut={() => setActiveMarker(null)}
                                 >
                                     {activeMarker === id ? (
                                         <InfoWindow>
-                                            <div>{name}</div>
+                                            <div>{Name}</div>
                                         </InfoWindow>
                                     ) : null}
                                 </Marker>
