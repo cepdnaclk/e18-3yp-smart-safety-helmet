@@ -100,16 +100,16 @@ export const UserListResults = ({ customers, ...rest }) => {
                                                 {getInitials(customer.Name)}
                                             </Avatar> */}
                                             <Typography color="textPrimary" variant="body1">
-                                                {customer.name}
+                                                {customer.Name}
                                             </Typography>
                                         </Box>
                                     </TableCell>
                                     {/* <TableCell>{customer.connectionStatus}</TableCell> */}
                                     {/* <TableCell>{customer.workingTime}</TableCell> */}
-                                    <TableCell>{customer.temperature}</TableCell>
-                                    <TableCell>{customer.noise_level}</TableCell>
-                                    <TableCell>{customer.vibration_level}</TableCell>
-                                    <TableCell>{customer.gas_level}</TableCell>
+                                    <TableCell>{customer.Tempurature}</TableCell>
+                                    <TableCell>{customer.Noice_Level}</TableCell>
+                                    <TableCell>{customer.Vibration_Level}</TableCell>
+                                    <TableCell>{customer.Gas_Level}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

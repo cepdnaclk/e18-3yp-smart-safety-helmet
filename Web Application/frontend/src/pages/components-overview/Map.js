@@ -143,7 +143,7 @@ const Map = () => {
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
-        state.result.forEach(({ position }) => bounds.extend(position));
+        state.result.forEach(({ Position }) => bounds.extend(Position));
         map.fitBounds(bounds);
     };
 
@@ -181,21 +181,21 @@ const Map = () => {
                             <>
                                 <Circle
                                     // key={uuid()}
-                                    center={marker.position}
+                                    center={marker.Position}
                                     options={CircleOptions}
-                                    visible={marker.temperature * 1 > 28 ? true : false}
+                                    visible={marker.Tempurature * 1 > 28 ? true : false}
                                 ></Circle>
                                 {isMounted && (
                                     <MarkerF
-                                        key={marker.id != undefined ? marker.id : marker.name}
-                                        position={marker.position}
-                                        animation={marker.temperature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
+                                        key={marker.id != undefined ? marker.id : marker.Name}
+                                        position={marker.Position}
+                                        animation={marker.Tempurature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
                                         onMouseOver={() => handleActiveMarker(marker.id)}
                                         onMouseOut={() => setActiveMarker(null)}
                                     >
-                                        {activeMarker === marker.id ? (
+                                        {activeMarker === (marker.id != undefined ? marker.id : marker.Name) ? (
                                             <InfoWindowF>
-                                                <div>{marker.name}</div>
+                                                <div>{marker.Name}</div>
                                             </InfoWindowF>
                                         ) : null}
                                     </MarkerF>
