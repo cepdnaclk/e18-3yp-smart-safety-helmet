@@ -93,12 +93,12 @@ export const getSensorData = (req, res) => {
 
           const data = {
             id: uuid(),
-            Name: name,
-            Tempurature: tempurature,
-            Vibration_Level: vibration,
-            Noice_Level: noise,
-            Gas_Level: gas,
-            Position: {
+            name: name,
+            temperature: tempurature,
+            vibration_level: vibration,
+            noise_level: noise,
+            gas_level: gas,
+            position: {
               lat: lat,
               lng: lng,
             },
