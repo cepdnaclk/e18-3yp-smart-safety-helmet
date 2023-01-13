@@ -1,5 +1,5 @@
 import express from 'express';
-import { addUser, checkAuth, getMaxSensor, getSensorData, getUser, verifyToken } from '../Controller/control.js';
+import { addUser, checkAuth, getlocation, getMaxSensor, getSensorData, getUser, verifyToken } from '../Controller/control.js';
 
 const router = express.Router();
 
@@ -16,5 +16,7 @@ router.post('/verifyToken', verifyToken);
 router.get('/maxTemp', /* checkAuth, */ getMaxSensor);
 
 router.get('/getSensors', getSensorData);
+
+router.get('/getLocation', /*checkAuth, */ getlocation );
 
 export default router;

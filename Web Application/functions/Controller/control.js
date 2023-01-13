@@ -80,7 +80,7 @@ export const getSensorData = (req, res) => {
          .then(snapshot => {
              if (snapshot.empty){
                  authorized = false;
-                 return res.send("There is no such user");
+                 return res.status(404).send("There is no such user");
              }
              else{
                 snapshot.forEach(doc => {
@@ -112,6 +112,43 @@ export const getSensorData = (req, res) => {
          })
 
          
+}
+
+// Function to get location data
+export const getlocation = async (req,res) => {
+    // Getting data from database
+    const dataSet = [];
+ 
+    userDB.get()
+    .then(snapshot => {
+        if (snapshot.empty){
+            authorized = false;
+            return res.status(404).send("There is no such user");
+        }
+        else{
+        snapshot.forEach(doc => {
+            const name = doc.get("name");
+            const logi = doc.get("Longitude");
+            const lati = doc.get("Latitude");
+
+            const data = {
+                "Name" : name,
+                "Latitude": lati,
+                "Longitude": logi
+            }
+
+            // console.log(data);
+
+            dataSet.push(data);
+        })
+        console.log("Requested Location");
+        return res.status(200).send(dataSet);
+        
+        }
+    })
+    .catch(err => {
+        return res.send("DataBase Error", err.message);
+    })
 }
 
 // Function to get maximum sensor data
