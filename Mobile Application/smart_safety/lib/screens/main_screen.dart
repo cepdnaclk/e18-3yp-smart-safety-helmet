@@ -1,14 +1,14 @@
 // Login Screen
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
+// import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smart_safety/main.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:smart_safety/screens/discover_page.dart';
+// import 'package:smart_safety/screens/discover_page.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -103,6 +103,10 @@ class _MainScrren extends State<MainScreen> {
     startStopWatch();
     updateWorkingTime();
 
+    // Check state update
+    checkState();
+    updateState();
+
     // Check whether bluetooth device is connected
     if (widget.server.isConnected) {
       setState(() {
@@ -191,14 +195,24 @@ class _MainScrren extends State<MainScreen> {
 
     // Create message if there is new line character
     String dataString = String.fromCharCodes(buffer);
+
+    // End character
     int index = buffer.indexOf(10);
     if (~index != 0) {
       setState(() {
         // Set message to the sensor data
         // Clear previous data before add new data for space
+        dataList.clear();
 
         // Adding sensor data to the variable
         sensorData = dataString.trim();
+
+        // Update state when data is received
+        // bluetoothStatus = !bluetoothStatus;
+        // temperature = dataString.trim().split('|').elementAt(0);
+        // noiseStatus = dataString.trim().split('|').elementAt(1);
+        // gasStatus = dataString.trim().split('|').elementAt(2);
+        // vibrationStatus = dataString.trim().split('|').elementAt(3);
 
         // Adding sensor data to the list
         dataList.add(backspacesCounter > 0
@@ -208,6 +222,12 @@ class _MainScrren extends State<MainScreen> {
 
         // Get the message
         _messageBuffer = dataString.substring(index);
+
+        // Set states of the variable
+        temperature = dataList.last.split('|').elementAt(0).trim();
+        noiseStatus = dataList.last.split('|').elementAt(1).trim();
+        gasStatus = dataList.last.split('|').elementAt(2).trim();
+        vibrationStatus = dataList.last.split('|').elementAt(3).trim();
       });
     }
 
@@ -414,7 +434,8 @@ class _MainScrren extends State<MainScreen> {
               const SizedBox(height: 30),
 
               // Test purpose only
-              Text("test $sensorData"),
+
+              // Text("test $sensorData"),
 
               // Timer to get work time
               SizedBox(
@@ -483,7 +504,7 @@ class _MainScrren extends State<MainScreen> {
                       const Text("  Temperature",
                           style: TextStyle(
                               fontSize: 30, fontWeight: FontWeight.bold)),
-                      Text("$temperature C ",
+                      Text("$temperature °C ",
                           style: const TextStyle(
                               fontSize: 30, fontWeight: FontWeight.bold))
                     ],
@@ -781,7 +802,7 @@ class _MainScrren extends State<MainScreen> {
         context, MaterialPageRoute(builder: (context) => const Login()));
 
     // Disconnect Bluetooth device
-    flutterBluetoothSerial.requestDisable();
+    // flutterBluetoothSerial.requestDisable();
     flutterBluetoothSerial.setPairingRequestHandler(null);
     dispose();
   }
@@ -805,10 +826,11 @@ class _MainScrren extends State<MainScreen> {
     // Set states (After analysing data recieved from bluetooth module)
     setState(() {
       bluetoothStatus = !bluetoothStatus;
-      temperature = sensorData.split("/").elementAt(0);
-      noiseStatus = sensorData.split("/").elementAt(1);
-      gasStatus = sensorData.split('/').elementAt(2);
-      vibrationStatus = sensorData.split("/").elementAt(3);
+      // below state updates when data is recieved
+      // temperature = sensorData.split("/").elementAt(0);
+      // noiseStatus = sensorData.split("/").elementAt(1);
+      // gasStatus = sensorData.split('/').elementAt(2);
+      // vibrationStatus = sensorData.split("/").elementAt(3);
     });
 
     // Data which is send to the Colud firestore
@@ -817,7 +839,9 @@ class _MainScrren extends State<MainScreen> {
 
     // If bluetoooth is enabled set BT state to connected
     if (bluetoothStatus) {
-      btState = "connected";
+      setState(() {
+        btState = "connected";
+      });
     }
     // update bluetooth State
     setBluetoothState();
@@ -836,6 +860,9 @@ class _MainScrren extends State<MainScreen> {
     //     vibrationStatus: vibrationStatus,
     //     workingTime: workingTime,
     //     temparature: temperature.toString());
+
+    // update State
+    updateState();
 
     //Update State if bluetooth connection is available
     // if (bluetoothStatus) {
