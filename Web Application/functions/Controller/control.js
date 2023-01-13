@@ -3,6 +3,8 @@ import admin from "firebase-admin";
 
 let authorized = false;
 
+let connectionStat = false;
+
 
 // Create the collection
 const userDB = db.collection('workers');
@@ -12,10 +14,10 @@ const supervisorDB = db.collection('supervisors');
 export const getUser = async (req, res) => {
     try{
         const response = await userDB.doc().get();
-        res.send(response.data());
+        return res.send(response.data());
     }
     catch(err){
-        res.send(err);
+        return res.send(err.message);
     }
     
 }
@@ -25,7 +27,7 @@ export const getUser = async (req, res) => {
 
 export const addUser = async (req, res) => {
     try{
-        // console.log(req.body);
+        console.log(req.body);
 
         let authID;
 
@@ -40,8 +42,9 @@ export const addUser = async (req, res) => {
                 authID = userRecord.uid;
                 console.log(`Successfully created new user: ${userRecord.uid}`);
                 // Creating user in fiirestore
-                const id = req.body.name;
+                const id = req.body.username;
                 const user = {
+                    name: req.body.name,
                     post: req.body.post,
                     email: req.body.email,
                     telNo: req.body.telNo,
@@ -50,18 +53,18 @@ export const addUser = async (req, res) => {
                 }
                 console.log(user);
 
-                const response = await userDB.doc(id).set(user);
+                const response = await userDB.doc(id).create(user);
                 console.log("User Created in fb firestore", user);
                 return res.status(200).send(response);
             })
             .catch(error => {
-              console.log(`Error creating new user: ${error}`);
+              return res.status(400).send(`Error creating new user: ${error}`);
             });
 
         console.log("authentication process completed")
     }
     catch(err){
-        res.send(err);
+        res.status(404).send(err.message);
     }
 }
 
@@ -71,35 +74,124 @@ export const addUser = async (req, res) => {
  * Way to give user id to every user
 */
 export const getSensorData = (req, res) => {
+         const dataSet = [];
+ 
+         userDB.get()
+         .then(snapshot => {
+             if (snapshot.empty){
+                 authorized = false;
+                 return res.send("There is no such user");
+             }
+             else{
+                snapshot.forEach(doc => {
+                    const name = doc.id;
+                    const tempurature = doc.get("Tempurature");
+                    const vibration = doc.get("Vibration_Level");
+                    const noise = doc.get("Noice_Level");
+                    const gas = doc.get("Gas_Level");
 
+                    const data = {
+                        "Name" : name,
+                        "Tempurature": tempurature,
+                        "Vibration_Level" : vibration,
+                        "Noice_Level" : noise,
+                        "Gas_Level" : gas
+                    }
+
+                    // console.log(data);
+
+                    dataSet.push(data);
+                })
+                console.log("Requested");
+                return res.status(200).send(dataSet);
+                
+             }
+         })
+         .catch(err => {
+             return res.send("DataBase Error", err.message);
+         })
+
+         
 }
 
 // Function to get maximum sensor data
-/**@ToDo 
- * Get max data from the all the fields in firebase
-*/
 export const getMaxSensor = async (req, res) => {
-    // Create a query to sort the documents in the collection by the field value in descending order
-    // and limit the results to the first (highest) document
-    const query = userDB.orderBy('Tempurature', 'desc').limit(1);
+      // Interating through the workers collection and gettig data
+      let temps = [];
+      let gasSafe = 0;
+      let vibSafe = 0;
+      let soundSafe = 0;
+      let workerCount = 0;
 
-    // Get the first (highest) document
-    await query.get().then(snapshot => {
+      await userDB.get().then(snapshot => {
         snapshot.forEach(doc => {
-          // Get the specific fields that you want from the document
-          const maxTemp = doc.get("Tempurature");
-          const userID = doc.get("UserID");
+            const temp = doc.get("Tempurature");
+            const gas = doc.get("Gas_Level");
+            const vib = doc.get("Vibration_Level");
+            const sound = doc.get("Noice_Level");
 
-          const data = {
-            "userID" : userID,
-            "MaxTemperature": maxTemp
-          }
-          return res.status(200).json(data);
-        });
-      }).catch(error => {
-        return res.status(404).send(error.message);
-      });
-        //const userName = snapshot.docs[0].get('UserID');
+            // Adding tempurature to the array
+            if (temp !== undefined){
+                temps.push(temp);
+            }
+
+            // Adding safe and unsafe count
+            if(gas === "safe"){
+                gasSafe++;
+            }
+            if(vib === "safe"){
+                vibSafe++;
+            }
+            if(sound === "safe"){
+                soundSafe++;
+            }
+            workerCount++;
+        })
+
+        console.log(temps);
+
+        /* const data = {
+            "MaxTemp": Math.max(...temps),
+            "MinTemp": Math.min(...temps),
+            "gasSafe": gasSafe,
+            "vibSafe": vibSafe,
+            "soundSafe": soundSafe,
+            "wokerCount": workerCount
+        } */
+
+        const data = [
+            {
+                "Title":"Maximum Temperature",
+                "value": Math.max(...temps)
+            },
+            {
+                "Title":"Minimum Temperature",
+                "value": Math.min(...temps)
+            },
+            {
+                "Title":"Harmful Gases",
+                "value": gasSafe
+            },
+            {
+                "Title":"Harmful Vibrations",
+                "value": vibSafe
+            },
+            {
+                "Title":"Harmful Noises",
+                "value": soundSafe
+            },
+            {
+                "Title":"workerCount",
+                "value": workerCount
+            },
+        ];
+
+        return res.status(200).send(data);
+      })
+      .catch(err => {
+        return res.status(404).send(err.message);
+      })
+    
 }
 
 // Function to verify the autheniticated user
@@ -145,14 +237,37 @@ export const checkAuth = (req, res, next) => {
     }
 }
 
+/* // function to check connection status
+let prevData = {};
 
-// function to check real time updates of database
-/* const doc = userDB.doc('Jeewantha');
+// Check that for every 6 seconds
+setInterval(() => {
+    userDB.get().then(snapshot => {
+        snapshot.forEach(doc => {
+            // const docId = doc.id;
+            let connectedDate;
+            
+            // If there is no such a update time field
+            if(doc.data().updatedAt === undefined){
+                connectedDate = 0;
+            }
+            else{
+                // If there is update time field, convert it to js time script and seconds
+                connectedDate = doc.data().updatedAt.toDate().getTime()/1000;
+            }
 
-const observer = doc.onSnapshot(docSnapshot => {
-  console.log(`Received doc snapshot: ${docSnapshot}`);
-  return docSnapshot.email;
-  // ...
-}, err => {
-  console.log(`Encountered error: ${err}`);
-}); */
+            // If the record is not updated for 6 seconds, make not connected
+            if(connectedDate - prevData[doc.id] < 1){
+                userDB.doc(doc.id).update({"connectionStatus":"Not_Connected"});
+            }
+            else{
+                // Else update as connected
+                userDB.doc(doc.id).update({"connectionStatus":"Connected"});
+                prevData[doc.id] = connectedDate;
+            }
+        })
+    }).catch(err => {
+        console.log(err.message);
+    })
+}, 6000); */
+// }
