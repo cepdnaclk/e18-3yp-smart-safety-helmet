@@ -1,0 +1,92 @@
+<!-- Tester Application to firebase Authentication
+Author: @JeewanthaUdeshika -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Authentication</title>
+    <link rel="stylesheet" href="login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+	<div class="main">  	
+		<input type="checkbox" id="chk" aria-hidden="true">
+
+			<div class="signup">
+				<form>
+					<label for="chk" aria-hidden="true">Sign up</label>
+					<input type="text" name="txt" placeholder="User name" required="">
+					<input type="email" name="email" placeholder="Email" required="">
+					<input type="password" name="pswd" placeholder="Password" required="">
+					<button>Sign up</button>
+				</form>
+			</div>
+
+			<div class="login">
+				<form id="sign-in-form">
+					<label for="chk" aria-hidden="true">Login</label>
+					<input type="email" name="email" id="email" placeholder="Email" required="">
+					<input type="password" name="pswd" id="password" placeholder="Password" required="">
+					<button type="submit">Login</button>
+				</form>
+			</div>
+	</div>
+
+    <!-- importing firebase -->
+    <script src="https://www.gstatic.com/firebasejs/7.21.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.21.0/firebase-auth.js"></script>
+
+    <!-- importing AXIOS -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+    <!-- script to get firebase token -->
+    <script>
+        // firebase app configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ",
+            authDomain: "smart-helmet-74616.firebaseapp.com",
+            databaseURL: "https://smart-helmet-74616-default-rtdb.firebaseio.com",
+            projectId: "smart-helmet-74616",
+            storageBucket: "smart-helmet-74616.appspot.com",
+            messagingSenderId: "20313702925",
+            appId: "1:20313702925:web:e293f804b8bbaaa6018b44"
+            };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const signInForm = document.querySelector("#sign-in-form");
+
+        // Make submit button functionalities
+        signInForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Getting email and password from user
+            const email = document.querySelector("#email").value;
+            const password = document.querySelector("#password").value;
+
+            firebase.auth().signInWithEmailAndPassword(email, password).then(function(response) {
+            // sign in successful
+            firebase.auth().currentUser.getIdToken().then(function(idToken) {
+                // send the ID token to the backend
+                axios.post("http://127.0.0.1:5001/smart-helmet-74616/us-central1/appFunc/verifyToken", { idToken }).then(function(response) {
+                // ID token was verified by the backend
+                    console.log(response);
+                }).catch(function(error) {
+                // an error occurred
+                    console.log(error.message);
+                });
+
+                console.log(idToken);
+            });
+            }).catch(function(error) {
+            // an error occurred
+            });
+        });
+    </script>
+    
+</body>
+</html>

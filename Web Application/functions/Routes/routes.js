@@ -1,5 +1,5 @@
 import express from 'express';
-import { addUser, checkAuth, getUser, verifyToken } from '../Controller/control.js';
+import { addUser, checkAuth, getlocation, getMaxSensor, getSensorData, getUser, verifyToken } from '../Controller/control.js';
 
 const router = express.Router();
 
@@ -9,8 +9,14 @@ router.get("/", (req, res)=>{
 
 router.get('/user', getUser);
 
-router.post('/addUser', checkAuth, addUser);
+router.post('/addUser', /* checkAuth, */ addUser);
 
 router.post('/verifyToken', verifyToken);
+
+router.get('/maxTemp', /* checkAuth, */ getMaxSensor);
+
+router.get('/getSensors', getSensorData);
+
+router.get('/getLocation', /*checkAuth, */ getlocation );
 
 export default router;
