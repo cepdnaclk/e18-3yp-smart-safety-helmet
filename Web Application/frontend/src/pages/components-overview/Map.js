@@ -4,7 +4,7 @@ import { Box, Container } from '@mui/material';
 import axios from 'axios';
 
 //import assests
-import { v4 as uuid } from 'uuid';
+// import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -143,8 +143,12 @@ const Map = () => {
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
-        state.result.forEach(({ Position }) => bounds.extend(Position));
-        map.fitBounds(bounds);
+        state.result.forEach(({ Position }) => {
+            bounds.extend(Position);
+            // map.setCenter(Position);
+            // map.setZoom(3);
+        });
+        // map.fitBounds(bounds);
     };
 
     const { isLoaded } = useJsApiLoader({
@@ -164,7 +168,7 @@ const Map = () => {
                 <Container maxWidth="xl">
                     <GoogleMap
                         mapContainerStyle={containerStyle}
-                        zoom={15}
+                        zoom={17}
                         options={mapControls}
                         onLoad={handleOnLoad}
                         center={{ lat: 6.933966, lng: 79.832577 }}
