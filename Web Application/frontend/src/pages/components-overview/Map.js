@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GoogleMap, InfoWindow, Marker, useJsApiLoader, Circle, GroundOverlay } from '@react-google-maps/api';
+import { GoogleMap, InfoWindowF, MarkerF, useJsApiLoader, Circle, GroundOverlay } from '@react-google-maps/api';
 import { Box, Container } from '@mui/material';
 import axios from 'axios';
 
@@ -15,26 +15,26 @@ const containerStyle = {
     height: '480px'
 };
 
-// const markers = [
-//     {
-//         id: 1,
-//         name: 'Jeewantha Udeshika',
-//         temperature: '29',
-//         position: { lat: 6.928939, lng: 79.834294 }
-//     },
-//     {
-//         id: 2,
-//         name: 'Ishan Maduranga',
-//         temperature: '32',
-//         position: { lat: 6.928896, lng: 79.833564 }
-//     },
-//     {
-//         id: 3,
-//         name: 'Tharindu Chamod',
-//         temperature: '24',
-//         position: { lat: 6.929621, lng: 79.830603 }
-//     }
-// ];
+const markers = [
+    {
+        id: 1,
+        Name: 'Jeewantha Udeshika',
+        Tempurature: '29',
+        position: { lat: 6.928939, lng: 79.834294 }
+    }
+    // {
+    //     id: 2,
+    //     name: 'Ishan Maduranga',
+    //     temperature: '32',
+    //     position: { lat: 6.928896, lng: 79.833564 }
+    // },
+    // {
+    //     id: 3,
+    //     name: 'Tharindu Chamod',
+    //     temperature: '24',
+    //     position: { lat: 6.929621, lng: 79.830603 }
+    // }
+];
 
 //Map controls
 const mapControls = {
@@ -74,8 +74,10 @@ const Map = () => {
 
     const [activeMarker, setActiveMarker] = useState(null);
 
+    const [isMounted, setIsMounted] = useState(false);
+
     //get the markers
-    const [markers, setMarkers] = useState({
+    const [state, setState] = useState({
         result: []
     });
 
@@ -103,6 +105,7 @@ const Map = () => {
                 if (user) {
                     //if there is logged user already
                     //navigate to dashboard
+                    setIsMounted(true);
                     navigate('/dashboard');
                     try {
                         const res = await axios({
@@ -111,7 +114,7 @@ const Map = () => {
                         });
 
                         console.log(res.data);
-                        setMarkers({ ...markers, result: res.data });
+                        setState({ ...state, result: res.data });
 
                         // console.log(state.result);
                     } catch (err) {
@@ -140,7 +143,7 @@ const Map = () => {
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
-        markers.result.forEach(({ Position }) => bounds.extend(Position));
+        state.result.forEach(({ position }) => bounds.extend(position));
         map.fitBounds(bounds);
     };
 
@@ -159,9 +162,15 @@ const Map = () => {
                 }}
             >
                 <Container maxWidth="xl">
-                    <GoogleMap mapContainerStyle={containerStyle} zoom={50} options={mapControls} onLoad={handleOnLoad}>
+                    <GoogleMap
+                        mapContainerStyle={containerStyle}
+                        zoom={5}
+                        options={mapControls}
+                        onLoad={handleOnLoad}
+                        center={{ lat: 6.933966, lng: 79.832577 }}
+                    >
                         {/* {<Marker position={center} />} */}
-                        {markers.result.map((marker) => (
+                        {state.result.map((marker) => (
                             // <Marker key={id} position={position} onClick={() => handleActiveMarker(id)}>
                             //     {activeMarker === id ? (
                             //         <InfoWindow onCloseClick={() => setActiveMarker(null)}>
@@ -172,25 +181,26 @@ const Map = () => {
                             <>
                                 <Circle
                                     // key={uuid()}
-                                    center={marker.Position}
+                                    center={marker.position}
                                     options={CircleOptions}
-                                    visible={marker.Tempurature * 1 > 28 ? true : false}
+                                    visible={marker.temperature * 1 > 28 ? true : false}
                                 ></Circle>
-                                <Marker
-                                    key={marker.id}
-                                    position={marker.Position}
-                                    animation={marker.Tempurature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
-                                    onMouseOver={() => handleActiveMarker(marker.id)}
-                                    onMouseOut={() => setActiveMarker(null)}
-                                >
-                                    {activeMarker === marker.id ? (
-                                        <InfoWindow>
-                                            <div>{marker.Name}</div>
-                                        </InfoWindow>
-                                    ) : null}
-                                </Marker>
-
-                                <GroundOverlay key={uuid()} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
+                                {isMounted && (
+                                    <MarkerF
+                                        key={marker.id}
+                                        position={marker.position}
+                                        animation={marker.temperature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
+                                        onMouseOver={() => handleActiveMarker(marker.id)}
+                                        onMouseOut={() => setActiveMarker(null)}
+                                    >
+                                        {activeMarker === marker.id ? (
+                                            <InfoWindowF>
+                                                <div>{marker.name}</div>
+                                            </InfoWindowF>
+                                        ) : null}
+                                    </MarkerF>
+                                )}
+                                <GroundOverlay key={'url'} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
                             </>
                         ))}
                     </GoogleMap>
