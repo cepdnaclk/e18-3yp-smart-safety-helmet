@@ -190,7 +190,7 @@ const Map = () => {
                                         key={marker.id != undefined ? marker.id : marker.Name}
                                         position={marker.Position}
                                         animation={marker.Tempurature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
-                                        onMouseOver={() => handleActiveMarker(marker.id)}
+                                        onMouseOver={() => handleActiveMarker(marker.id != undefined ? marker.id : marker.Name)}
                                         onMouseOut={() => setActiveMarker(null)}
                                     >
                                         {activeMarker === (marker.id != undefined ? marker.id : marker.Name) ? (
