@@ -90,6 +90,7 @@ export const getSensorData = (req, res) => {
           const gas = doc.get("Gas_Level");
           const lat = doc.get("Latitude");
           const lng = doc.get("Longitude");
+          const conStatus = doc.get("connectionStatus");
 
           const data = {
             id: uuid(),
@@ -102,6 +103,7 @@ export const getSensorData = (req, res) => {
               lat: lat,
               lng: lng,
             },
+            Connection : conStatus
           };
 
           // console.log(data);
