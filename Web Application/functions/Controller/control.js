@@ -13,10 +13,46 @@ const supervisorDB = db.collection("supervisors");
 // Function to get given user details
 export const getUser = async (req, res) => {
   try {
-    const response = await userDB.doc().get();
-    return res.send(response.data());
+    let user = req.params.id;
+    console.log(user);
+
+    await userDB.doc(user).get()
+    .then(doc => {
+      const name = doc.get("name");
+      const tempurature = doc.get("Tempurature");
+      const vibration = doc.get("Vibration_Level");
+      const noise = doc.get("Noice_Level");
+      const gas = doc.get("Gas_Level");
+      
+      const data = [
+        {
+          Title: "Temperature",
+          value: tempurature,
+        },
+        {
+          Title: "Vibration",
+          value: vibration,
+        },
+        {
+          Title: "Noise Level",
+          value: noise,
+        },
+        {
+          Title: "Gas Level",
+          value: gas,
+        },
+        {
+          Title: "Name",
+          value: name,
+        }
+      ];
+
+      return res.status(200).send(data);
+    
+    })
+    
   } catch (err) {
-    return res.send(err.message);
+    return res.status(404).send(err.message);
   }
 };
 
@@ -83,6 +119,7 @@ export const getSensorData = (req, res) => {
         return res.status(404).send("There is no such user");
       } else {
         snapshot.forEach((doc) => {
+          const userName = doc.id;
           const name = doc.get("name");
           const tempurature = doc.get("Tempurature");
           const vibration = doc.get("Vibration_Level");
@@ -94,6 +131,7 @@ export const getSensorData = (req, res) => {
 
           const data = {
             id: uuid(),
+            userName: userName,
             Name: name,
             Tempurature: tempurature,
             Vibration_Level: vibration,
