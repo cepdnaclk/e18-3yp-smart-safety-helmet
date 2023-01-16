@@ -7,7 +7,7 @@ router.get("/", (req, res)=>{
     res.send({message: "Hi User"});
 });
 
-router.get('/user', getUser);
+router.get('/user/:id', getUser);
 
 router.post('/addUser', /* checkAuth, */ addUser);
 
