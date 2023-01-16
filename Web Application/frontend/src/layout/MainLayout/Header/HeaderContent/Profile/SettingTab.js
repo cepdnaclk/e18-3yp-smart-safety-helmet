@@ -17,20 +17,24 @@ const SettingTab = () => {
         setSelectedIndex(index);
     };
 
+    const handleSupport = () => {
+        window.location.replace('https://github.com');
+    };
+
     return (
         <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32, color: theme.palette.grey[500] } }}>
-            <ListItemButton selected={selectedIndex === 0} onClick={(event) => handleListItemClick(event, 0)}>
+            <ListItemButton selected={selectedIndex === 0} onClick={handleSupport}>
                 <ListItemIcon>
                     <QuestionCircleOutlined />
                 </ListItemIcon>
                 <ListItemText primary="Support" />
             </ListItemButton>
-            <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
+            {/* <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
                 <ListItemIcon>
                     <UserOutlined />
                 </ListItemIcon>
                 <ListItemText primary="Account Settings" />
-            </ListItemButton>
+            </ListItemButton> */}
             {/* <ListItemButton selected={selectedIndex === 2} onClick={(event) => handleListItemClick(event, 2)}>
                 <ListItemIcon>
                     <LockOutlined />
