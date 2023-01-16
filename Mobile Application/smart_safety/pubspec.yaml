@@ -40,6 +40,7 @@ dependencies:
   firebase_auth: ^4.2.1
   firebase_database: ^10.0.7
   flutter_bluetooth_serial: ^0.4.0
+  geolocator: ^9.0.2
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +67,7 @@ flutter:
   assets:
     - images/mobile_top.png
     - images/mobile_top.jpg
+    - images/logo.png
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

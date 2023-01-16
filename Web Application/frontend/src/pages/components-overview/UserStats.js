@@ -1,30 +1,43 @@
 import { Avatar, Box, Container, Grid, Card, CardContent, Typography } from '@mui/material';
-// import { statistics } from '../../__mocks__/statistics';
-// import { StatCard } from '../../components/statistics/stat-card';
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 //import assests
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import config from 'firebaseConfig';
 import axios from '../../../node_modules/axios/index';
 
 const Page = () => {
-    // Navigator
+    // get the username
+    const { state } = useLocation();
+
     const navigate = useNavigate();
 
     const [time, setTime] = useState({
         response: 1
     });
 
-    const [state, setState] = useState({
+    const [stats, setStats] = useState({
         result: []
     });
 
-    const [workerCount, setWorkerCount] = useState({
-        count: {}
+    //function to select the color
+    const colorPicker = (stat) => {
+        if (stat.Title === 'Temperature') {
+            return '#0000FF';
+        } else {
+            if (stat.value === 'safe') {
+                return '#00FF00';
+            } else {
+                return '#FF0000';
+            }
+        }
+    };
+
+    const [name, setName] = useState({
+        name: ''
     });
 
     //delay function
@@ -40,23 +53,25 @@ const Page = () => {
                 if (user) {
                     //if there is logged user already
                     //navigate to dashboard
-                    navigate('/statistics');
+                    navigate('/userstats');
+                    // console.log(state);
                     const res = await axios({
                         method: 'GET',
-                        url: `${process.env.REACT_APP_API_URL}/maxTemp`
+                        url: `${process.env.REACT_APP_API_URL}/user/${state}`
                     });
 
+                    console.log(res.data);
                     // console.log(res.data.slice(-1));
 
                     //remove the last element from the object array
                     // const original = res.data;
                     // original.splice(-1);
-                    console.log(res.data);
-                    setState({ ...state, result: res.data });
+                    // console.log(res.data);
+                    setStats({ ...stats, result: res.data });
 
-                    //get the worker count
-                    setWorkerCount({ ...workerCount, count: res.data.pop() });
-                    // console.log(state.result);
+                    // console.log(stats.result);
+                    //get the Name
+                    setName({ ...name, name: res.data.pop() });
                 } else {
                     // User is signed out
                     // No user is signed in.
@@ -85,9 +100,20 @@ const Page = () => {
         >
             <Container maxWidth={false}>
                 {/* <StatListToolbar /> */}
+                <Typography
+                    key={uuid()}
+                    align="center"
+                    color="textPrimary"
+                    variant="h3"
+                    fontSize={20}
+                    fontStyle="italic"
+                    sx={{ color: '#0000FF', visibility: name.name.value === undefined ? 'hidden' : 'visible' }}
+                >
+                    {name.name.value}
+                </Typography>
                 <Box sx={{ pt: 3 }}>
                     <Grid container spacing={3}>
-                        {state.result.map((stat) => (
+                        {stats.result.map((stat) => (
                             <Grid item key={uuid()} lg={4} md={6} xs={12}>
                                 {/* <StatCard stat={stat} /> */}
                                 <Card
@@ -117,23 +143,9 @@ const Page = () => {
                                             variant="h3"
                                             fontSize={20}
                                             fontStyle="italic"
-                                            sx={{ color: '#0000FF' }}
+                                            sx={{ color: colorPicker(stat) }}
                                         >
-                                            {stat.Title !== 'Maximum Temperature' && stat.Title !== 'Minimum Temperature'
-                                                ? `safe : ${stat.value}`
-                                                : `${stat.value} \u00b0C`}
-                                        </Typography>
-                                        <Typography
-                                            align="center"
-                                            color="textPrimary"
-                                            variant="h3"
-                                            fontSize={20}
-                                            fontStyle="italic"
-                                            sx={{ color: '#FF0000' }}
-                                        >
-                                            {stat.Title !== 'Maximum Temperature' && stat.Title !== 'Minimum Temperature'
-                                                ? `unsafe : ${workerCount.count.value - stat.value}`
-                                                : ''}
+                                            {stat.Title !== 'Temperature' ? `${stat.value}` : `${stat.value} \u00b0C`}
                                         </Typography>
                                     </CardContent>
                                 </Card>
@@ -141,15 +153,6 @@ const Page = () => {
                         ))}
                     </Grid>
                 </Box>
-                {/* <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            pt: 3,
-          }}
-        >
-          <Pagination color="primary" count={3} size="small" />
-        </Box> */}
             </Container>
         </Box>
     );

@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_safety/screens/first_screen.dart';
 import 'package:smart_safety/screens/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,32 +30,32 @@ class MyApp extends StatelessWidget {
 }
 
 // Class to sign in using email and password
-class SignIn extends StatelessWidget {
-  // Constructor
-  const SignIn({super.key});
+// class SignIn extends StatelessWidget {
+//   // Constructor
+//   const SignIn({super.key});
 
-  // Return the next screen after authentication
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: ((context, snapshot) {
-            if (snapshot.hasData) {
-              return const MainScreen(
-                username: "Tharindu",
-              ); // Return to the main screen with logged user
+//   // Return the next screen after authentication
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: StreamBuilder<User?>(
+//           stream: FirebaseAuth.instance.authStateChanges(),
+//           builder: ((context, snapshot) {
+//             if (snapshot.hasData) {
+//               return const MainScreen(
+//                 username: "Tharindu",
+//               ); // Return to the main screen with logged user
 
-            }
-            if (snapshot.hasError) {
-              return const ErrorLogin();
-            } else {
-              return const Login(); // else remain in the login page
-            }
-          })),
-    );
-  }
-}
+//             }
+//             if (snapshot.hasError) {
+//               return const ErrorLogin();
+//             } else {
+//               return const Login(); // else remain in the login page
+//             }
+//           })),
+//     );
+//   }
+// }
 
 // Login Screen of the system
 class Login extends StatefulWidget {
@@ -68,9 +71,28 @@ class Login extends StatefulWidget {
 class _Login extends State<Login> {
   // State to Keep the username
   String username = "user-name";
+  // State to keep userId
+  String userId = "";
   // Declarer controllers to get passwords and username
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  // State of location and bluetooth
+  bool location = false;
+  bool bluetoothStatus = false;
+
+  // Password view variable
+  bool _obsecure = true;
+
+  // Initializescreen
+  @override
+  void initState() {
+    super.initState();
+
+    // request bluetooth and location access
+    requestLocationAccess();
+    requestBluetoothAccess();
+  }
 
   // Dispose the controllers when widget is disposed
   @override
@@ -137,9 +159,19 @@ class _Login extends State<Login> {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: TextFormField(
                   controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      hintText: 'Password', icon: Icon(Icons.verified_user)),
+                  obscureText: _obsecure,
+                  decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _obsecure = !_obsecure;
+                            });
+                          },
+                          icon: Icon(_obsecure
+                              ? Icons.visibility
+                              : Icons.visibility_off)),
+                      hintText: 'Password',
+                      icon: const Icon(Icons.verified_user)),
                 ),
               ),
 
@@ -166,6 +198,11 @@ class _Login extends State<Login> {
                   ),
                 ),
               ),
+
+              // Gap betwwen login button and status widgets
+              const SizedBox(
+                height: 50,
+              ),
             ],
           ),
         ),
@@ -178,33 +215,177 @@ class _Login extends State<Login> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => MainScreen(username: username)));
+            builder: (context) => ConnectingScreen(
+                  username: username,
+                  userID: userId,
+                )));
+  }
+
+  // Function to request Location persmission
+  Future<void> requestLocationAccess() async {
+    // Request for location services to be on
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      // If permission is denied request for permission
+      permission = await Geolocator.requestPermission();
+
+      // After requesting permisssion cheeck whther permission is denieed or not
+      // IF permission is denied set it in state
+      if (permission == LocationPermission.denied) {
+        setState(() {
+          location = false;
+        });
+      }
+
+      // if the permission is given
+      else {
+        setState(() {
+          location = true;
+        });
+      }
+    }
+
+    // If permission are given as always or location services are while in use
+    if ((permission == LocationPermission.whileInUse) ||
+        (permission == LocationPermission.always)) {
+      // Set the location to the state
+      setState(() {
+        location = true;
+      });
+    }
+  }
+
+  // Function to enable location
+  Future<void> enableLocation() async {
+    // Get the location is enabled or not
+    bool? isLocationEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (isLocationEnabled) {
+      setState(() {
+        location = true;
+      });
+    }
+
+    // if location is not turn on
+    if (!isLocationEnabled) {
+      // Request to enable location
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Enable Location"),
+            content: const Text(
+                "Location services are disabled. Please enable location services in settings."),
+            actions: <Widget>[
+              ElevatedButton(
+                child: const Text("Open Settings"),
+                onPressed: () async {
+                  final bool isLocationEnabled =
+                      await Geolocator.isLocationServiceEnabled();
+                  if (!isLocationEnabled) {
+                    // redirect to location settings
+                    final bool serviceStatus =
+                        await Geolocator.isLocationServiceEnabled();
+                    if (!serviceStatus) {
+                      // ignore: use_build_context_synchronously
+                      if (Theme.of(context).platform ==
+                          TargetPlatform.android) {
+                        await Geolocator.openAppSettings();
+                        // ignore: use_build_context_synchronously
+                      } else if (Theme.of(context).platform ==
+                          TargetPlatform.iOS) {
+                        await Geolocator.openLocationSettings();
+                      }
+                    }
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  // Function to request bluetooth permission
+  Future<void> requestBluetoothAccess() async {
+    // check whether bluetooth is enable or not
+    bool? isBluetoothEnabled = await FlutterBluetoothSerial.instance.isEnabled;
+
+    // requet access
+    if ((isBluetoothEnabled != null) && (isBluetoothEnabled)) {
+      setState(() {
+        bluetoothStatus = true;
+      });
+    }
+    if ((isBluetoothEnabled != null) && (!isBluetoothEnabled)) {
+      // Request acess to enable bluetooth
+      FlutterBluetoothSerial.instance.requestEnable();
+      setState(() {
+        bluetoothStatus = false;
+      });
+    }
   }
 
   // Authenticating user with firebase
   Future<void> signIn() async {
-    final loggedUserResult = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim());
+    try {
+      final loggedUserResult = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: _emailController.text.trim().toLowerCase(),
+              password: _passwordController.text.trim());
 
-    // Get the logged user id
-    final userID = loggedUserResult.user?.uid;
+      // Get the logged user id
+      var userID = loggedUserResult.user?.uid;
 
-    // get the document related to the user ID
-    final DocumentSnapshot doc =
-        await FirebaseFirestore.instance.collection('users').doc(userID).get();
+      // get the document related to the user ID
+      final DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userID)
+          .get();
 
-    // get the data from the document
-    var userName = doc.get('name');
+      // get the data from the document
+      var userName = doc.get('name');
 
-    // Update the State
-    setState(() {
-      username = userName;
-    });
+      // Update the State
+      setState(() {
+        username = userName;
+        userId = userID!;
+      });
 
-    // Navigate to the main screen
-    navigationToMain();
+      // Navigate to the main screen
+      navigationToMain();
+    }
+    // if there is login error t will shown as dialog
+    catch (ex) {
+      // This dialog box show warning when login error occured
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(
+              'Login Error',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+            ),
+            content: const Text('Invalid Credentials ! Try Again',
+                style: TextStyle(fontSize: 20)),
+            actions: <Widget>[
+              TextButton(
+                child: const Text("Close",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
 
