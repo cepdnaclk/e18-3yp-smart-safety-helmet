@@ -23,6 +23,7 @@ export const getUser = async (req, res) => {
       const vibration = doc.get("Vibration_Level");
       const noise = doc.get("Noice_Level");
       const gas = doc.get("Gas_Level");
+      const working = doc.get("working-time");
       
       const data = [
         {
@@ -44,6 +45,10 @@ export const getUser = async (req, res) => {
         {
           Title: "Name",
           value: name,
+        },
+        {
+          Title: "Working Time",
+          value: working
         }
       ];
 
@@ -231,15 +236,6 @@ export const getMaxSensor = async (req, res) => {
 
       console.log(temps);
 
-      /* const data = {
-            "MaxTemp": Math.max(...temps),
-            "MinTemp": Math.min(...temps),
-            "gasSafe": gasSafe,
-            "vibSafe": vibSafe,
-            "soundSafe": soundSafe,
-            "wokerCount": workerCount
-        } */
-
       const data = [
         {
           Title: "Maximum Temperature",
@@ -318,6 +314,27 @@ export const checkAuth = (req, res, next) => {
     return;
   }
 };
+
+// Function to notify the workers
+export const notify = async (req, res) => {
+  userDB.get().then(snapshot => {
+    snapshot.forEach(doc => {
+        // const docId = doc.id;
+        let notifySignal = doc.get("notify");
+        
+        if(notifySignal == undefined){
+          userDB.doc(doc.id).update({"notify":true});
+        }
+        else{
+          userDB.doc(doc.id).update({"notify":!notifySignal});
+        }
+    })
+    return res.status(200).send("All workers notified");
+}).catch(err => {
+    console.log(err.message);
+    return res.status(404).send("A error occured");
+})
+}
 
 /* // function to check connection status
 let prevData = {};
