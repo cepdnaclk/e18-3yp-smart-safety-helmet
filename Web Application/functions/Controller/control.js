@@ -16,8 +16,41 @@ export const getUser = async (req, res) => {
     let user = req.params.id;
     console.log(user);
 
-    const response = await userDB.doc(user).get();
-    return res.status(200).send(response.data());
+    await userDB.doc(user).get()
+    .then(doc => {
+      const name = doc.get("name");
+      const tempurature = doc.get("Tempurature");
+      const vibration = doc.get("Vibration_Level");
+      const noise = doc.get("Noice_Level");
+      const gas = doc.get("Gas_Level");
+      
+      const data = [
+        {
+          Title: "Temperature",
+          value: tempurature,
+        },
+        {
+          Title: "Vibration",
+          value: vibration,
+        },
+        {
+          Title: "Noise Level",
+          value: noise,
+        },
+        {
+          Title: "Gas Level",
+          value: gas,
+        },
+        {
+          Title: "Name",
+          value: name,
+        }
+      ];
+
+      return res.status(200).send(data);
+    
+    })
+    
   } catch (err) {
     return res.status(404).send(err.message);
   }
