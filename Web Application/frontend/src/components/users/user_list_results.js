@@ -69,6 +69,7 @@ export const UserListResults = ({ customers, ...rest }) => {
                                     />
                                 </TableCell> */}
                                 <TableCell>Name</TableCell>
+                                <TableCell>Connection Status</TableCell>
                                 {/* <TableCell>Connection Status</TableCell> */}
                                 {/* <TableCell>Working Time</TableCell> */}
                                 <TableCell>Temperature</TableCell>
@@ -104,12 +105,20 @@ export const UserListResults = ({ customers, ...rest }) => {
                                             </Typography>
                                         </Box>
                                     </TableCell>
-                                    {/* <TableCell>{customer.connectionStatus}</TableCell> */}
+                                    <TableCell sx={{ color: customer.Connection === 'Connected' ? 'green' : 'red' }}>
+                                        {`● ${customer.Connection}`}
+                                    </TableCell>
                                     {/* <TableCell>{customer.workingTime}</TableCell> */}
                                     <TableCell>{customer.Tempurature}</TableCell>
-                                    <TableCell>{customer.Noice_Level}</TableCell>
-                                    <TableCell>{customer.Vibration_Level}</TableCell>
-                                    <TableCell>{customer.Gas_Level}</TableCell>
+                                    <TableCell sx={{ color: customer.Noice_Level === 'safe' ? 'black' : 'red' }}>
+                                        {customer.Noice_Level}
+                                    </TableCell>
+                                    <TableCell sx={{ color: customer.Vibration_Level === 'safe' ? 'black' : 'red' }}>
+                                        {customer.Vibration_Level}
+                                    </TableCell>
+                                    <TableCell sx={{ color: customer.Gas_Level === 'safe' ? 'black' : 'red' }}>
+                                        {customer.Gas_Level}
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

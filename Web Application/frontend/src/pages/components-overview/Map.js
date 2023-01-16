@@ -43,7 +43,7 @@ const mapControls = {
     streetViewControl: false,
     rotateControl: false,
     fullscreenControl: false,
-    zoomControl: false,
+    // zoomControl: false,
     scrollWheel: false
 };
 
@@ -90,6 +90,13 @@ const Map = () => {
             return;
         }
         setActiveMarker(marker);
+    };
+
+    //when you click on the marker
+    const handleClick = (marker) => {
+        navigate('/userstats', {
+            state: marker.userName
+        });
     };
 
     const [time, setTime] = useState({
@@ -197,9 +204,17 @@ const Map = () => {
                                     <MarkerF
                                         key={marker.id != undefined ? marker.id : marker.Name}
                                         position={marker.Position}
-                                        animation={marker.Tempurature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
+                                        animation={
+                                            marker.Tempurature * 1 > 28 ||
+                                            marker.Noice_Level === 'unsafe' ||
+                                            marker.Gas_Level === 'unsafe' ||
+                                            marker.Vibration_Level === 'unsafe'
+                                                ? window.google.maps.Animation.BOUNCE
+                                                : null
+                                        }
                                         onMouseOver={() => handleActiveMarker(marker.id != undefined ? marker.id : marker.Name)}
                                         onMouseOut={() => setActiveMarker(null)}
+                                        onClick={() => handleClick(marker)}
                                     >
                                         {activeMarker === (marker.id != undefined ? marker.id : marker.Name) ? (
                                             <InfoWindowF
@@ -208,7 +223,9 @@ const Map = () => {
                                                     setCurrentCenter(position);
                                                 }}
                                             >
-                                                <div>{marker.Name}</div>
+                                                <div>
+                                                    <h3>{marker.Name}</h3>
+                                                </div>
                                             </InfoWindowF>
                                         ) : null}
                                     </MarkerF>
