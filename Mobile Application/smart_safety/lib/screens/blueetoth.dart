@@ -15,7 +15,7 @@ class Bluetooth extends StatefulWidget {
 
 // State Class for Blueetooth pairing
 
-class BluetoothScreen extends State<Bluetooth> with WidgetsBindingObserver {
+class BluetoothScreen extends State<Bluetooth> {
   // Declare a FlutterBluetoothSerial instance
   FlutterBluetoothSerial flutterBluetoothSerial =
       FlutterBluetoothSerial.instance;
@@ -45,8 +45,8 @@ class BluetoothScreen extends State<Bluetooth> with WidgetsBindingObserver {
     // Constructor
     super.initState();
 
-    // Add widget binding observer
-    WidgetsBinding.instance.addObserver(this);
+    // asking for permission
+    flutterBluetoothSerial.requestEnable();
 
     // Start dicovering when initialzing the screen
     if (isDiscovering) {
@@ -57,8 +57,9 @@ class BluetoothScreen extends State<Bluetooth> with WidgetsBindingObserver {
   // Dispose function to avoid memory leaks
   @override
   void dispose() {
-    // Disposing the binder
-    WidgetsBinding.instance.removeObserver(this);
+    // Cancel the stream discription of bluetooth devices
+    streamSubscription?.cancel();
+
     super.dispose();
   }
 
