@@ -5,6 +5,7 @@ import { Avatar, Box, Card, Table, TableBody, TableCell, TableHead, TablePaginat
 import { getInitials } from '../../utils/get-initials';
 
 //import assests
+import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -68,15 +69,20 @@ export const UserListResults = ({ customers, ...rest }) => {
                                     />
                                 </TableCell> */}
                                 <TableCell>Name</TableCell>
-                                <TableCell>Working Time</TableCell>
+                                <TableCell>Connection Status</TableCell>
+                                {/* <TableCell>Connection Status</TableCell> */}
+                                {/* <TableCell>Working Time</TableCell> */}
                                 <TableCell>Temperature</TableCell>
-                                <TableCell>Noise</TableCell>
-                                <TableCell>Vibration</TableCell>
+                                <TableCell>Noise Level</TableCell>
+                                <TableCell>Vibration Level</TableCell>
+                                <TableCell>Gas Level</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {customers.slice(0, limit).map((customer) => (
-                                <TableRow hover key={customer.id} selected={selectedCustomerIds.indexOf(customer.id) !== -1}>
+                            {/* {customers.slice(0, limit).map((customer) => ( */}
+                            {customers.slice(page * limit, page * limit + limit).map((customer) => (
+                                <TableRow hover key={uuid()} selected={selectedCustomerIds.indexOf(customer.id) !== -1}>
+                                    {/* <TableRow hover key={customer.name}> */}
                                     {/* <TableCell padding="checkbox">
                                         <Checkbox
                                             checked={selectedCustomerIds.indexOf(customer.id) !== -1}
@@ -91,18 +97,28 @@ export const UserListResults = ({ customers, ...rest }) => {
                                                 display: 'flex'
                                             }}
                                         >
-                                            <Avatar src={customer.avatarUrl} sx={{ mr: 2 }}>
-                                                {getInitials(customer.name)}
-                                            </Avatar>
+                                            {/* <Avatar src={customer.avatarUrl} sx={{ mr: 2 }}>
+                                                {getInitials(customer.Name)}
+                                            </Avatar> */}
                                             <Typography color="textPrimary" variant="body1">
-                                                {customer.name}
+                                                {customer.Name}
                                             </Typography>
                                         </Box>
                                     </TableCell>
-                                    <TableCell>{customer.email}</TableCell>
-                                    <TableCell>{customer.temperature}</TableCell>
-                                    <TableCell>{customer.noise}</TableCell>
-                                    <TableCell>{customer.vibration}</TableCell>
+                                    <TableCell sx={{ color: customer.Connection === 'Connected' ? 'green' : 'red' }}>
+                                        {`● ${customer.Connection}`}
+                                    </TableCell>
+                                    {/* <TableCell>{customer.workingTime}</TableCell> */}
+                                    <TableCell>{customer.Tempurature}</TableCell>
+                                    <TableCell sx={{ color: customer.Noice_Level === 'safe' ? 'black' : 'red' }}>
+                                        {customer.Noice_Level}
+                                    </TableCell>
+                                    <TableCell sx={{ color: customer.Vibration_Level === 'safe' ? 'black' : 'red' }}>
+                                        {customer.Vibration_Level}
+                                    </TableCell>
+                                    <TableCell sx={{ color: customer.Gas_Level === 'safe' ? 'black' : 'red' }}>
+                                        {customer.Gas_Level}
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
