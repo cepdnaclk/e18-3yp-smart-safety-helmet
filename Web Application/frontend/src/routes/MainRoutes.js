@@ -19,6 +19,7 @@ const Users = Loadable(lazy(() => import('pages/components-overview/Users')));
 const Map = Loadable(lazy(() => import('pages/components-overview/Map')));
 const Statistics = Loadable(lazy(() => import('pages/components-overview/Statistics')));
 const Settings = Loadable(lazy(() => import('pages/components-overview/Settings')));
+const UserStats = Loadable(lazy(() => import('pages/components-overview/UserStats')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -54,6 +55,10 @@ const MainRoutes = {
         {
             path: 'settings',
             element: <Settings />
+        },
+        {
+            path: 'userstats',
+            element: <UserStats />
         }
     ]
 };

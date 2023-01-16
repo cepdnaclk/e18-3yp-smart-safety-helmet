@@ -51,7 +51,7 @@ const Page = () => {
                     //remove the last element from the object array
                     // const original = res.data;
                     // original.splice(-1);
-                    // console.log(res.data);
+                    console.log(res.data);
                     setState({ ...state, result: res.data });
 
                     //get the worker count
