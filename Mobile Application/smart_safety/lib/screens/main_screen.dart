@@ -16,11 +16,18 @@ class MainScreen extends StatefulWidget {
   // Variable to store username
   final String username;
 
+  // Variable to store user-id
+  final String userID;
+
   // Get the bluetooth device to communicate
   final BluetoothDevice server;
 
   // Constructor
-  const MainScreen({super.key, required this.username, required this.server});
+  const MainScreen(
+      {super.key,
+      required this.username,
+      required this.server,
+      required this.userID});
 
   @override
   State<StatefulWidget> createState() => _MainScrren();
@@ -104,7 +111,7 @@ class _MainScrren extends State<MainScreen> {
     updateWorkingTime();
 
     // Check state update
-    checkState();
+    // checkState();
     updateState();
 
     // Check whether bluetooth device is connected
@@ -146,7 +153,7 @@ class _MainScrren extends State<MainScreen> {
     });
 
     // // Request access to geo ocator when initializing
-    requestLocationAccess();
+    // requestLocationAccess();
   }
 
   // Function t dispose
@@ -632,6 +639,33 @@ class _MainScrren extends State<MainScreen> {
                 height: 20,
               ),
 
+              // buton to stop piexzo buzzer
+              SizedBox(
+                width: 200,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Off the buzzer by sending serial zero to BT HC06
+                    offBuzzer();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                  child: const Text(
+                    'Turn off Buzzer',
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Space between two buttons for clarity
+              const SizedBox(
+                height: 20,
+              ),
+
               // logout button for log out the system
               SizedBox(
                 width: 200,
@@ -660,6 +694,12 @@ class _MainScrren extends State<MainScreen> {
         ),
       ),
     );
+  }
+
+  // This method turn off the buzzer
+  void offBuzzer() {
+    // Send zero to off the buzzer
+    _sendMessage("0");
   }
 
   // ===================================================== Bluetooth Communication ========================================
@@ -805,7 +845,7 @@ class _MainScrren extends State<MainScreen> {
 
   // Callback function to update state in every 5 second
   // initialize duration
-  final updateDuration = const Duration(seconds: 1);
+  final updateDuration = const Duration(seconds: 5);
 
   // Function to update State
   void updateState() {
@@ -849,13 +889,14 @@ class _MainScrren extends State<MainScreen> {
     getNotifications();
 
     // Create data with sensor details to send to the firebase
-    // createData(
-    //     username: widget.username,
-    //     bluetoothStatus: btState,
-    //     noiseStatus: noiseStatus,
-    //     vibrationStatus: vibrationStatus,
-    //     workingTime: workingTime,
-    //     temparature: temperature.toString());
+    createData(
+        username: widget.username,
+        userID: widget.userID,
+        bluetoothStatus: btState,
+        noiseStatus: noiseStatus,
+        vibrationStatus: vibrationStatus,
+        workingTime: workingTime,
+        temparature: temperature.toString());
 
     // update State
     updateState();
@@ -921,12 +962,13 @@ class _MainScrren extends State<MainScreen> {
               ),
               onPressed: () {
                 // Sending message to arduino
-                _sendMessage("1");
+
                 setState(() {
                   emergencyPressed = false; // Set State to emergency pressed
                 });
-                // sendNotification(
-                // name: widget.username); // Send noptification with username
+                sendNotification(
+                    name: widget.username,
+                    userID: widget.userID); // Send noptification with username
                 Navigator.of(context).pop();
               },
             ),
@@ -988,10 +1030,14 @@ class _MainScrren extends State<MainScreen> {
   }
 
   // Function to create notification
-  Future sendNotification({required String name}) async {
+  Future sendNotification(
+      {required String name, required String userID}) async {
     // Reference to the notification database
+    // final userDoc =
+    //     FirebaseFirestore.instance.collection('safety-notification').doc();
+
     final userDoc =
-        FirebaseFirestore.instance.collection('safety-notification').doc();
+        FirebaseFirestore.instance.collection('safety-notification');
 
     // Create notification object
     final notification = Notification(name: widget.username);
@@ -1000,19 +1046,21 @@ class _MainScrren extends State<MainScreen> {
     final json = notification.toJSON();
 
     // Send to the cloud firestore
-    await userDoc.set(json);
+    await userDoc.doc(userID).update(json);
   }
 
   // Function to send data to the database
   Future createData(
       {required String username,
+      required String userID,
       required String bluetoothStatus,
       required String noiseStatus,
       required String vibrationStatus,
       required String temparature,
       required String workingTime}) async {
     // Referenec to the collection (AppData)
-    final userDoc = FirebaseFirestore.instance.collection('appdata').doc();
+    // final userDoc = FirebaseFirestore.instance.collection('appdata').doc();
+    final userDoc = FirebaseFirestore.instance.collection('appdata');
 
     // Create data object
     final data = UserData(
@@ -1028,8 +1076,11 @@ class _MainScrren extends State<MainScreen> {
     // Create JSON object
     final jsondata = data.toJSON();
 
+    // Update data with existing firebase document
+    await userDoc.doc(userID).update(jsondata);
+
     // Send data to the Cloud Firestore
-    await userDoc.set(jsondata);
+    // await userDoc.set(jsondata);
   }
 
   // Firebase get realtime notification

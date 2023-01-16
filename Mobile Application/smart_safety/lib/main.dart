@@ -71,6 +71,8 @@ class Login extends StatefulWidget {
 class _Login extends State<Login> {
   // State to Keep the username
   String username = "user-name";
+  // State to keep userId
+  String userId = "";
   // Declarer controllers to get passwords and username
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -213,7 +215,10 @@ class _Login extends State<Login> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ConnectingScreen(username: username)));
+            builder: (context) => ConnectingScreen(
+                  username: username,
+                  userID: userId,
+                )));
   }
 
   // Function to request Location persmission
@@ -332,7 +337,7 @@ class _Login extends State<Login> {
               password: _passwordController.text.trim());
 
       // Get the logged user id
-      final userID = loggedUserResult.user?.uid;
+      var userID = loggedUserResult.user?.uid;
 
       // get the document related to the user ID
       final DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -346,6 +351,7 @@ class _Login extends State<Login> {
       // Update the State
       setState(() {
         username = userName;
+        userId = userID!;
       });
 
       // Navigate to the main screen
