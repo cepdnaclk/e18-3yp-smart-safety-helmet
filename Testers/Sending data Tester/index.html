@@ -1,114 +1,180 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Smart Helmet Simulation</title>
-  <link rel="stylesheet" type="text/css" href="index.css">
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <title>Smart Helmet Simulation</title>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+  </head>
 
-<body>
-  <div class="login-root">
-    <div class="box-root flex-flex flex-direction--column" style="min-height: 100vh;flex-grow: 1;">
-      <div class="loginbackground box-background--white padding-top--64">
-        <div class="loginbackground-gridContainer">
-          <div class="box-root flex-flex" style="grid-area: top / start / 8 / end;">
-            <div class="box-root" style="background-image: linear-gradient(white 0%, rgb(247, 250, 252) 33%); flex-grow: 1;">
+  <body>
+    <div class="login-root">
+      <div
+        class="box-root flex-flex flex-direction--column"
+        style="min-height: 100vh; flex-grow: 1"
+      >
+        <div class="loginbackground box-background--white padding-top--64">
+          <div class="loginbackground-gridContainer">
+            <div
+              class="box-root flex-flex"
+              style="grid-area: top / start / 8 / end"
+            >
+              <div
+                class="box-root"
+                style="
+                  background-image: linear-gradient(
+                    white 0%,
+                    rgb(247, 250, 252) 33%
+                  );
+                  flex-grow: 1;
+                "
+              ></div>
+            </div>
+            <div class="box-root flex-flex" style="grid-area: 4 / 2 / auto / 5">
+              <div
+                class="box-root box-divider--light-all-2 animationLeftRight tans3s"
+                style="flex-grow: 1"
+              ></div>
+            </div>
+            <div
+              class="box-root flex-flex"
+              style="grid-area: 6 / start / auto / 2"
+            >
+              <div
+                class="box-root box-background--blue800"
+                style="flex-grow: 1"
+              ></div>
+            </div>
+            <div
+              class="box-root flex-flex"
+              style="grid-area: 7 / start / auto / 4"
+            >
+              <div
+                class="box-root box-background--blue animationLeftRight"
+                style="flex-grow: 1"
+              ></div>
+            </div>
+            <div class="box-root flex-flex" style="grid-area: 8 / 4 / auto / 6">
+              <div
+                class="box-root box-background--gray100 animationLeftRight tans3s"
+                style="flex-grow: 1"
+              ></div>
+            </div>
+            <div
+              class="box-root flex-flex"
+              style="grid-area: 2 / 15 / auto / end"
+            >
+              <div
+                class="box-root box-background--cyan200 animationRightLeft tans4s"
+                style="flex-grow: 1"
+              ></div>
+            </div>
+            <div
+              class="box-root flex-flex"
+              style="grid-area: 3 / 14 / auto / end"
+            >
+              <div
+                class="box-root box-background--blue animationRightLeft"
+                style="flex-grow: 1"
+              ></div>
+            </div>
+            <div
+              class="box-root flex-flex"
+              style="grid-area: 4 / 17 / auto / 20"
+            >
+              <div
+                class="box-root box-background--gray100 animationRightLeft tans4s"
+                style="flex-grow: 1"
+              ></div>
+            </div>
+            <div
+              class="box-root flex-flex"
+              style="grid-area: 5 / 14 / auto / 17"
+            >
+              <div
+                class="box-root box-divider--light-all-2 animationRightLeft tans3s"
+                style="flex-grow: 1"
+              ></div>
             </div>
           </div>
-          <div class="box-root flex-flex" style="grid-area: 4 / 2 / auto / 5;">
-            <div class="box-root box-divider--light-all-2 animationLeftRight tans3s" style="flex-grow: 1;"></div>
-          </div>
-          <div class="box-root flex-flex" style="grid-area: 6 / start / auto / 2;">
-            <div class="box-root box-background--blue800" style="flex-grow: 1;"></div>
-          </div>
-          <div class="box-root flex-flex" style="grid-area: 7 / start / auto / 4;">
-            <div class="box-root box-background--blue animationLeftRight" style="flex-grow: 1;"></div>
-          </div>
-          <div class="box-root flex-flex" style="grid-area: 8 / 4 / auto / 6;">
-            <div class="box-root box-background--gray100 animationLeftRight tans3s" style="flex-grow: 1;"></div>
-          </div>
-          <div class="box-root flex-flex" style="grid-area: 2 / 15 / auto / end;">
-            <div class="box-root box-background--cyan200 animationRightLeft tans4s" style="flex-grow: 1;"></div>
-          </div>
-          <div class="box-root flex-flex" style="grid-area: 3 / 14 / auto / end;">
-            <div class="box-root box-background--blue animationRightLeft" style="flex-grow: 1;"></div>
-          </div>
-          <div class="box-root flex-flex" style="grid-area: 4 / 17 / auto / 20;">
-            <div class="box-root box-background--gray100 animationRightLeft tans4s" style="flex-grow: 1;"></div>
-          </div>
-          <div class="box-root flex-flex" style="grid-area: 5 / 14 / auto / 17;">
-            <div class="box-root box-divider--light-all-2 animationRightLeft tans3s" style="flex-grow: 1;"></div>
-          </div>
         </div>
-      </div>
-      <div class="box-root padding-top--24 flex-flex flex-direction--column" style="flex-grow: 1; z-index: 9;">
-        <div class="box-root padding-top--48 padding-bottom--24 flex-flex flex-justifyContent--center">
-          <h1><a href="https://e18-3yp-smart-safety-helmet-ij5v.vercel.app" rel="dofollow">Supervisor Helmet Simulation</a></h1>
-        </div>
-        <div class="formbg-outer">
-          <div class="formbg">
-            <div class="formbg-inner padding-horizontal--48">
-            
+        <div
+          class="box-root padding-top--24 flex-flex flex-direction--column"
+          style="flex-grow: 1; z-index: 9"
+        >
+          <div
+            class="box-root padding-top--48 padding-bottom--24 flex-flex flex-justifyContent--center"
+          >
+            <h1>
+              <a
+                href="https://e18-3yp-smart-safety-helmet-ij5v.vercel.app"
+                rel="dofollow"
+                >Supervisor Helmet Simulation</a
+              >
+            </h1>
+          </div>
+          <div class="formbg-outer">
+            <div class="formbg">
+              <div class="formbg-inner padding-horizontal--48">
                 <div class="field padding-bottom--24">
                   <label for="userName">UserName</label>
-                  <input type="text" id="userName">
+                  <input type="text" id="userName" />
                 </div>
                 <div class="field padding-bottom--24">
                   <button id="start-button">Start</button>
-              </div>
-              
-                
-              <form>
-                <div class="field padding-bottom--24">
+                </div>
+
+                <form>
+                  <div class="field padding-bottom--24">
                     <label for="Tempurature ">Tempurature</label>
                     <h2 id="Tempurature">0</h2>
-                </div>
-                <div class="field padding-bottom--24">
+                  </div>
+                  <div class="field padding-bottom--24">
                     <label for="Noice_Level ">Noice_Level</label>
                     <h2 id="Noice_Level">0</h2>
-                </div>
-                <div class="field padding-bottom--24">
+                  </div>
+                  <div class="field padding-bottom--24">
                     <label for="Gas_Level ">Gas_Level</label>
                     <h2 id="Gas_Level">0</h2>
-                </div>
-                <div class="field padding-bottom--24">
+                  </div>
+                  <div class="field padding-bottom--24">
                     <label for="Vibration_Level ">Vibration_Level</label>
                     <h2 id="Vibration_Level">0</h2>
-                </div>
-            </form>
-                
+                  </div>
+                </form>
+              </div>
             </div>
-          </div>
-          <div class="footer-link padding-top--24">
-            <div class="listing padding-top--24 padding-bottom--24 flex-flex center-center">
-              <span><a href="#">© JUA</a></span>
-              <span><a href="#">Contact</a></span>
+            <div class="footer-link padding-top--24">
+              <div
+                class="listing padding-top--24 padding-bottom--24 flex-flex center-center"
+              >
+                <span><a href="#">© JUA</a></span>
+                <span><a href="#">Contact</a></span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- importing firebase -->
-  <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-firestore.js"></script>
+    <!-- importing firebase -->
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-firestore.js"></script>
 
-  <script>
+    <script>
       firebase.initializeApp({
-          apiKey: "AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ",
-          authDomain: "smart-helmet-74616.firebaseapp.com",
-          databaseURL: "https://smart-helmet-74616-default-rtdb.firebaseio.com",
-          projectId: "smart-helmet-74616",
-          storageBucket: "smart-helmet-74616.appspot.com",
-          messagingSenderId: "20313702925",
-          appId: "1:20313702925:web:2d0d33b42177fe99018b44"
+        apiKey: "AIzaSyBK0t0b6M_dS7Jin7D7dgGCeKbZq_dq5FQ",
+        authDomain: "smart-helmet-74616.firebaseapp.com",
+        databaseURL: "https://smart-helmet-74616-default-rtdb.firebaseio.com",
+        projectId: "smart-helmet-74616",
+        storageBucket: "smart-helmet-74616.appspot.com",
+        messagingSenderId: "20313702925",
+        appId: "1:20313702925:web:2d0d33b42177fe99018b44",
       });
 
-      firebase.firestore().settings({
-      host: 'localhost:8080',
-      ssl: false
-    });
+      //   firebase.firestore().settings({
+      //   host: 'localhost:8080',
+      //   ssl: false
+      // });
 
       // Initialize Firestore (When using cloud store)
       const firestore = firebase.firestore();
@@ -131,40 +197,41 @@
       const Gas_Level = document.getElementById("Gas_Level");
       const Vibration_Level = document.getElementById("Vibration_Level");
 
-
       startButton.addEventListener("click", () => {
-      // Use setInterval() to update the field on the specified interval
-      let conBool = false;
-      setInterval(() => {
-          let temp = Math.floor(Math.random()*(100 - 10) + 10);
+        // Use setInterval() to update the field on the specified interval
+        let conBool = false;
+        setInterval(() => {
+          let temp = Math.floor(Math.random() * (100 - 10) + 10);
           let noice = "safe";
           let gas = "safe";
           let vibration = "safe";
 
-          if (temp % 4 == 0){
-              noice = "unsafe";
+          if (temp % 4 == 0) {
+            noice = "unsafe";
           }
-          if (temp % 4 == 1){
-              gas = "unsafe";
+          if (temp % 4 == 1) {
+            gas = "unsafe";
           }
-          if (temp % 4 == 2){
-              vibration = "unsafe";
+          if (temp % 4 == 2) {
+            vibration = "unsafe";
           }
 
-          let lati = 6.9298220 + Math.random()*(0.0001);
-          let longi =  79.8302677 + Math.random()*(0.0001);
+          //Latitude: 7.2547155, Longitude: 80.5911812
+          let lati = 6.929822 + Math.random() * 0.0001;
+          let longi = 79.8302677 + Math.random() * 0.0001;
+
+          let location = "Latitude: " + lati + ", Longitude: " + longi;
 
           console.log(userName.value);
 
           // Generate some random data
           const data = {
-              "Tempurature": temp,
-              "Noice_Level": noice,
-              "Gas_Level": gas,
-              "Vibration_Level": vibration,
-              "Latitude": lati,
-              "Longitude": longi,
-              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            Tempurature: temp,
+            Noice_Level: noice,
+            Gas_Level: gas,
+            Vibration_Level: vibration,
+            location: location,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
           };
 
           // Update the field with the random data
@@ -177,10 +244,8 @@
           Noice_Level.innerHTML = data.Noice_Level;
           Gas_Level.innerHTML = data.Gas_Level;
           Vibration_Level.innerHTML = data.Vibration_Level;
-
-      }, interval);
+        }, interval);
       });
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>
