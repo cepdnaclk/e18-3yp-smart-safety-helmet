@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 //import assests
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import config from 'firebaseConfig';
-import axios from '../../../node_modules/axios/index';
+import axios from 'axios';
 
 const Page = () => {
     // get the username
@@ -46,6 +47,8 @@ const Page = () => {
     useEffect(() => {
         async function getData() {
             //initialize the App
+            //set the name first
+            // setUsername({ ...username, previous: state });
             firebase.initializeApp(config);
 
             //checks whether a user is successfully logged in or not
@@ -54,7 +57,9 @@ const Page = () => {
                     //if there is logged user already
                     //navigate to dashboard
                     navigate('/userstats');
+                    // console.log(user);
                     // console.log(state);
+
                     const res = await axios({
                         method: 'GET',
                         url: `${process.env.REACT_APP_API_URL}/user/${state}`
@@ -85,6 +90,7 @@ const Page = () => {
             await delay(5000);
             setTime({ ...time, response: !time.response });
             // console.log('Stats loaded');
+            // location.reload();
         }
 
         getData();
