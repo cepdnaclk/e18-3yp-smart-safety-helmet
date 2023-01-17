@@ -252,7 +252,7 @@ class _MainScrren extends State<MainScreen> {
 
     if (text.isNotEmpty) {
       try {
-        connection!.output.add(Uint8List.fromList(utf8.encode("$text\r\n")));
+        connection!.output.add(Uint8List.fromList(utf8.encode(text)));
         await connection!.output.allSent;
 
         setState(() {});
@@ -266,14 +266,14 @@ class _MainScrren extends State<MainScreen> {
   // Function to check and set bluetooth state
   void setBluetoothState() {
     // if device is connected
-    if (widget.server.isConnected) {
+    if (widget.server.isBonded) {
       setState(() {
         bluetoothStatus = true;
       });
     }
 
     // if device is not connected
-    if (!widget.server.isConnected) {
+    else {
       setState(() {
         bluetoothStatus = false;
       });
@@ -706,9 +706,6 @@ class _MainScrren extends State<MainScreen> {
     setState(() {
       _sendMessage("0");
     });
-
-    // send zero to arduino
-    _sendMessage("0");
   }
 
   // Function to start Stop watch
@@ -1078,7 +1075,10 @@ class _MainScrren extends State<MainScreen> {
 
       // popup notifications
       if (notify == true) {
+        // Popup notification window
         notifications();
+        // On the piezo buzzer
+        _sendMessage("1");
 
         // Set the notification flase obejct
         Map<String, dynamic> falseData = {'notify': false};
