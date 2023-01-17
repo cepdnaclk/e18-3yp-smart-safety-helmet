@@ -9,6 +9,7 @@ let connectionStat = false;
 // Create the collection
 const userDB = db.collection("workers");
 const supervisorDB = db.collection("supervisors");
+const notifyDB = db.collection("users");
 
 // Function to get given user details
 export const getUser = async (req, res) => {
@@ -96,11 +97,20 @@ export const addUser = async (req, res) => {
           bloodGroup: req.body.bloodGroup,
           UserID: authID,
         };
+
+        const userNotify = {
+          name: req.body.username,
+        };
         console.log(user);
 
         const response = await userDB.doc(id).create(user);
+
+        const responseNotify = await notifyDB.doc(authID).create(userNotify);
+
         console.log("User Created in fb firestore", user);
-        return res.status(200).send(response);
+        return res
+          .status(200)
+          .send({ DBResponse: response, notifyRes: responseNotify });
       })
       .catch((error) => {
         return res.status(400).send(`Error creating new user: ${error}`);
@@ -111,6 +121,7 @@ export const addUser = async (req, res) => {
     res.status(404).send(err.message);
   }
 };
+
 
 // Function to get sensor data of one user
 /**@ToDo
@@ -134,9 +145,11 @@ export const getSensorData = (req, res) => {
           const vibration = doc.get("Vibration_Level");
           const noise = doc.get("Noice_Level");
           const gas = doc.get("Gas_Level");
-          const lat = doc.get("Latitude");
-          const lng = doc.get("Longitude");
+          const location = doc.get("location");
           const conStatus = doc.get("connectionStatus");
+
+          const lat = location.split(",")[0].split(":")[1].split(" ")[1] * 1;
+          const lng = location.split(",")[1].split(":")[1].split(" ")[1] * 1;
 
           const data = {
             id: uuid(),
@@ -150,7 +163,7 @@ export const getSensorData = (req, res) => {
               lat: lat,
               lng: lng,
             },
-            Connection : conStatus
+            Connection: conStatus,
           };
 
           // console.log(data);
