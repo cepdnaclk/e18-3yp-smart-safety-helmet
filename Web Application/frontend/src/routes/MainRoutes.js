@@ -31,15 +31,15 @@ const MainRoutes = {
             path: '/',
             element: <Map />
         },
-        // {
-        //     path: 'dashboard',
-        //     children: [
-        //         {
-        //             path: 'default',
-        //             element: <Map />
-        //         }
-        //     ]
-        // },
+        {
+            path: '/',
+            children: [
+                {
+                    path: 'dashboard/default',
+                    element: <Map />
+                }
+            ]
+        },
         {
             path: 'dashboard',
             element: <Map />
