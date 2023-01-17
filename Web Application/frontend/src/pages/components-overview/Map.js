@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { GoogleMap, InfoWindow, Marker, useJsApiLoader, Circle, GroundOverlay } from '@react-google-maps/api';
+import { GoogleMap, InfoWindowF, MarkerF, useJsApiLoader, Circle, GroundOverlay } from '@react-google-maps/api';
 import { Box, Container } from '@mui/material';
-// import axios from 'axios';
+import axios from 'axios';
 
 //import assests
+// import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -14,31 +15,26 @@ const containerStyle = {
     height: '480px'
 };
 
-const markers = [
-    {
-        id: 1,
-        name: 'Jeewantha Udeshika',
-        temperature: '29',
-        position: { lat: 6.928939, lng: 79.834294 }
-    },
-    {
-        id: 2,
-        name: 'Ishan Maduranga',
-        temperature: '32',
-        position: { lat: 6.928896, lng: 79.833564 }
-    },
-    {
-        id: 3,
-        name: 'Tharindu Chamod',
-        temperature: '24',
-        position: { lat: 6.929621, lng: 79.830603 }
-    }
-    // {
-    //   id: 4,
-    //   name: "Lakshan Wijekoon",
-    //   position: { lat: 40.74, lng: -74.18},
-    // }
-];
+// const markers = [
+//     {
+//         id: 1,
+//         Name: 'Jeewantha Udeshika',
+//         Tempurature: '29',
+//         position: { lat: 6.928939, lng: 79.834294 }
+//     },
+//     {
+//         id: 2,
+//         name: 'Ishan Maduranga',
+//         temperature: '32',
+//         position: { lat: 6.928896, lng: 79.833564 }
+//     },
+//     {
+//         id: 3,
+//         name: 'Tharindu Chamod',
+//         temperature: '24',
+//         position: { lat: 6.929621, lng: 79.830603 }
+//     }
+// ];
 
 //Map controls
 const mapControls = {
@@ -47,7 +43,7 @@ const mapControls = {
     streetViewControl: false,
     rotateControl: false,
     fullscreenControl: false,
-    zoomControl: false,
+    // zoomControl: false,
     scrollWheel: false
 };
 
@@ -78,6 +74,17 @@ const Map = () => {
 
     const [activeMarker, setActiveMarker] = useState(null);
 
+    const [isMounted, setIsMounted] = useState(false);
+
+    //get the markers
+    const [state, setState] = useState({
+        result: []
+    });
+
+    const [currentcenter, setCurrentCenter] = useState({
+        result: { lat: 6.933966, lng: 79.832577 }
+    });
+
     const handleActiveMarker = (marker) => {
         if (marker === activeMarker) {
             return;
@@ -85,23 +92,46 @@ const Map = () => {
         setActiveMarker(marker);
     };
 
+    //when you click on the marker
+    const handleClick = (marker) => {
+        navigate('/userstats', {
+            state: marker.userName
+        });
+    };
+
+    const [time, setTime] = useState({
+        response: 1
+    });
+
+    //delay function
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
     useEffect(() => {
         async function getData() {
-            // Send the application data to the backend
-            // const res = await axios({
-            //     method: 'GET',
-            //     url: 'https://dog.ceo/api/breeds/image/random'
-            // });
-
             // console.log(res);
             firebase.initializeApp(config);
 
             //checks whether a user is successfully logged in or not
-            firebase.auth().onAuthStateChanged((user) => {
+            firebase.auth().onAuthStateChanged(async (user) => {
                 if (user) {
                     //if there is logged user already
                     //navigate to dashboard
+                    setIsMounted(true);
                     navigate('/dashboard');
+                    try {
+                        const res = await axios({
+                            method: 'GET',
+                            url: `${process.env.REACT_APP_API_URL}/getSensors`
+                        });
+
+                        console.log(res.data);
+                        setState({ ...state, result: res.data });
+
+                        // console.log(state.result);
+                    } catch (err) {
+                        console.log(err.response);
+                    }
+
                     // ...
                 } else {
                     // User is signed out
@@ -112,6 +142,11 @@ const Map = () => {
                     navigate('/login');
                 }
             });
+
+            await delay(5000);
+            setTime({ ...time, response: !time.response });
+
+            // console.log('Map loaded');
         }
 
         getData();
@@ -119,8 +154,12 @@ const Map = () => {
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
-        markers.forEach(({ position }) => bounds.extend(position));
-        map.fitBounds(bounds);
+        state.result.forEach(({ Position }) => {
+            bounds.extend(Position);
+            // map.setCenter(Position);
+            // map.setZoom(3);
+        });
+        // map.fitBounds(bounds);
     };
 
     const { isLoaded } = useJsApiLoader({
@@ -138,9 +177,15 @@ const Map = () => {
                 }}
             >
                 <Container maxWidth="xl">
-                    <GoogleMap mapContainerStyle={containerStyle} zoom={50} options={mapControls} onLoad={handleOnLoad}>
+                    <GoogleMap
+                        mapContainerStyle={containerStyle}
+                        zoom={17}
+                        options={mapControls}
+                        onLoad={handleOnLoad}
+                        center={currentcenter.result}
+                    >
                         {/* {<Marker position={center} />} */}
-                        {markers.map(({ id, name, position, temperature }) => (
+                        {state.result.map((marker) => (
                             // <Marker key={id} position={position} onClick={() => handleActiveMarker(id)}>
                             //     {activeMarker === id ? (
                             //         <InfoWindow onCloseClick={() => setActiveMarker(null)}>
@@ -150,25 +195,41 @@ const Map = () => {
                             // </Marker>
                             <>
                                 <Circle
-                                    // key={id}
-                                    center={position}
+                                    // key={uuid()}
+                                    center={marker.Position}
                                     options={CircleOptions}
-                                    visible={temperature * 1 > 28 ? true : false}
+                                    visible={marker.Tempurature * 1 > 28 ? true : false}
                                 ></Circle>
-                                <Marker
-                                    key={id}
-                                    position={position}
-                                    animation={temperature * 1 > 28 ? window.google.maps.Animation.BOUNCE : null}
-                                    onMouseOver={() => handleActiveMarker(id)}
-                                    onMouseOut={() => setActiveMarker(null)}
-                                >
-                                    {activeMarker === id ? (
-                                        <InfoWindow>
-                                            <div>{name}</div>
-                                        </InfoWindow>
-                                    ) : null}
-                                </Marker>
-
+                                {isMounted && (
+                                    <MarkerF
+                                        key={marker.id != undefined ? marker.id : marker.Name}
+                                        position={marker.Position}
+                                        animation={
+                                            marker.Tempurature * 1 > 28 ||
+                                            marker.Noice_Level === 'unsafe' ||
+                                            marker.Gas_Level === 'unsafe' ||
+                                            marker.Vibration_Level === 'unsafe'
+                                                ? window.google.maps.Animation.BOUNCE
+                                                : null
+                                        }
+                                        onMouseOver={() => handleActiveMarker(marker.id != undefined ? marker.id : marker.Name)}
+                                        onMouseOut={() => setActiveMarker(null)}
+                                        onClick={() => handleClick(marker)}
+                                    >
+                                        {activeMarker === (marker.id != undefined ? marker.id : marker.Name) ? (
+                                            <InfoWindowF
+                                                onCloseClick={() => {
+                                                    setActiveMarker(null);
+                                                    setCurrentCenter(position);
+                                                }}
+                                            >
+                                                <div>
+                                                    <h3>{marker.Name}</h3>
+                                                </div>
+                                            </InfoWindowF>
+                                        ) : null}
+                                    </MarkerF>
+                                )}
                                 <GroundOverlay key={'url'} url="https://i.imgur.com/T7nHzB8.jpeg" bounds={bounds} />
                             </>
                         ))}

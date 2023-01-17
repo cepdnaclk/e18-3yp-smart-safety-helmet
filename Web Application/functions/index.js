@@ -3,6 +3,7 @@ import routes from './Routes/routes.js';
 import bodyParser from 'body-parser';
 import functions from 'firebase-functions'
 import cors from 'cors'
+// import { checkConnected } from './Controller/control.js';
 
 
 const app = express();
@@ -13,4 +14,4 @@ app.use(bodyParser.urlencoded({ extended: true })); // Make data encoding method
 
 app.use("/", routes);
 
-export const appFunc = functions.https.onRequest(app);
+export const SupervisorHelmet = functions.https.onRequest(app);
