@@ -88,7 +88,7 @@ const Page = () => {
         }
 
         getData();
-    }, []);
+    }, [time]);
 
     return (
         <Box
