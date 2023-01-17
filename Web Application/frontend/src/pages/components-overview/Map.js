@@ -55,14 +55,31 @@ const CircleOptions = {
     strokeColor: '#FFFFFF',
     strokeOpacity: 0.3,
     strokeWeight: 2,
-    fillColor: '#FF0000',
+    // fillColor: '#FF0000',
+    fillColor: '#FB00FF',
     fillOpacity: 0.1,
     clickable: false,
     draggable: false,
     editable: false,
     visible: true,
-    radius: 10,
+    radius: 5,
     zIndex: 1
+};
+
+const colorPicker = (title) => {
+    if (title.Tempurature * 1 > 28) {
+        //red
+        return '#FF0000';
+    } else if (title.Noice_Level === 'unsafe') {
+        //green
+        return '#00FF00';
+    } else if (title.Gas_Level === 'unsafe') {
+        //blue
+        return '#0000FF';
+    } else if (title.Vibration_Level === 'unsafe') {
+        //violet
+        return '#FB00FF';
+    }
 };
 
 const bounds = {
@@ -245,8 +262,18 @@ const Map = () => {
                                 <Circle
                                     // key={uuid()}
                                     center={marker.Position}
-                                    options={CircleOptions}
-                                    visible={marker.Tempurature * 1 > 28 ? true : false}
+                                    options={{
+                                        CircleOptions,
+                                        fillColor: colorPicker(marker)
+                                    }}
+                                    visible={
+                                        marker.Tempurature * 1 > 28 ||
+                                        marker.Noice_Level === 'unsafe' ||
+                                        marker.Gas_Level === 'unsafe' ||
+                                        marker.Vibration_Level === 'unsafe'
+                                            ? true
+                                            : false
+                                    }
                                 ></Circle>
                                 {isMounted && (
                                     <MarkerF

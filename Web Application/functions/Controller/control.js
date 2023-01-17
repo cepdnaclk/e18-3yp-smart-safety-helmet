@@ -9,6 +9,7 @@ let connectionStat = false;
 // Create the collection
 const userDB = db.collection("workers");
 const supervisorDB = db.collection("supervisors");
+const notify = db.collection("users");
 
 // Function to get given user details
 export const getUser = async (req, res) => {
@@ -16,41 +17,41 @@ export const getUser = async (req, res) => {
     let user = req.params.id;
     console.log(user);
 
-    await userDB.doc(user).get()
-    .then(doc => {
-      const name = doc.get("name");
-      const tempurature = doc.get("Tempurature");
-      const vibration = doc.get("Vibration_Level");
-      const noise = doc.get("Noice_Level");
-      const gas = doc.get("Gas_Level");
-      
-      const data = [
-        {
-          Title: "Temperature",
-          value: tempurature,
-        },
-        {
-          Title: "Vibration",
-          value: vibration,
-        },
-        {
-          Title: "Noise Level",
-          value: noise,
-        },
-        {
-          Title: "Gas Level",
-          value: gas,
-        },
-        {
-          Title: "Name",
-          value: name,
-        }
-      ];
+    await userDB
+      .doc(user)
+      .get()
+      .then((doc) => {
+        const name = doc.get("name");
+        const tempurature = doc.get("Tempurature");
+        const vibration = doc.get("Vibration_Level");
+        const noise = doc.get("Noice_Level");
+        const gas = doc.get("Gas_Level");
 
-      return res.status(200).send(data);
-    
-    })
-    
+        const data = [
+          {
+            Title: "Temperature",
+            value: tempurature,
+          },
+          {
+            Title: "Vibration",
+            value: vibration,
+          },
+          {
+            Title: "Noise Level",
+            value: noise,
+          },
+          {
+            Title: "Gas Level",
+            value: gas,
+          },
+          {
+            Title: "Name",
+            value: name,
+          },
+        ];
+
+        return res.status(200).send(data);
+      });
   } catch (err) {
     return res.status(404).send(err.message);
   }
@@ -66,6 +67,14 @@ export const addUser = async (req, res) => {
     let authID;
 
     console.log("before authentication process");
+
+    let name;
+    let tempurature;
+    let vibration;
+    let noice;
+    let gas;
+
+    // add
 
     // Creating user in user authentication
     admin
@@ -87,11 +96,20 @@ export const addUser = async (req, res) => {
           bloodGroup: req.body.bloodGroup,
           UserID: authID,
         };
+
+        const userNotify = {
+          name: req.body.username,
+        };
         console.log(user);
 
         const response = await userDB.doc(id).create(user);
+
+        const responseNotify = await notify.doc(authID).create(userNotify);
+
         console.log("User Created in fb firestore", user);
-        return res.status(200).send(response);
+        return res
+          .status(200)
+          .send({ DBResponse: response, notifyRes: responseNotify });
       })
       .catch((error) => {
         return res.status(400).send(`Error creating new user: ${error}`);
@@ -125,9 +143,11 @@ export const getSensorData = (req, res) => {
           const vibration = doc.get("Vibration_Level");
           const noise = doc.get("Noice_Level");
           const gas = doc.get("Gas_Level");
-          const lat = doc.get("Latitude");
-          const lng = doc.get("Longitude");
+          const location = doc.get("location");
           const conStatus = doc.get("connectionStatus");
+
+          const lat = location.split(",")[0].split(":")[1].split(" ")[1] * 1;
+          const lng = location.split(",")[1].split(":")[1].split(" ")[1] * 1;
 
           const data = {
             id: uuid(),
@@ -141,7 +161,7 @@ export const getSensorData = (req, res) => {
               lat: lat,
               lng: lng,
             },
-            Connection : conStatus
+            Connection: conStatus,
           };
 
           // console.log(data);
