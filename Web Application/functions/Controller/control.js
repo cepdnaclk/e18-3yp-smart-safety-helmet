@@ -9,23 +9,28 @@ let connectionStat = false;
 // Create the collection
 const userDB = db.collection("workers");
 const supervisorDB = db.collection("supervisors");
-const notify = db.collection("users");
+const notifyDB = db.collection("users");
 
 // Function to get given user details
 export const getUser = async (req, res) => {
   try {
     let user = req.params.id;
-    console.log(user);
+    // console.log(user);
 
     await userDB
       .doc(user)
       .get()
       .then((doc) => {
+        console.log(doc.id);
+        if (doc.id === null) {
+          return res.status(404).send("User not found");
+        }
         const name = doc.get("name");
         const tempurature = doc.get("Tempurature");
         const vibration = doc.get("Vibration_Level");
         const noise = doc.get("Noice_Level");
         const gas = doc.get("Gas_Level");
+        const working = doc.get("working-time");
 
         const data = [
           {
@@ -43,6 +48,10 @@ export const getUser = async (req, res) => {
           {
             Title: "Gas Level",
             value: gas,
+          },
+          {
+            Title: "Working Time",
+            value: working,
           },
           {
             Title: "Name",
@@ -67,14 +76,6 @@ export const addUser = async (req, res) => {
     let authID;
 
     console.log("before authentication process");
-
-    let name;
-    let tempurature;
-    let vibration;
-    let noice;
-    let gas;
-
-    // add
 
     // Creating user in user authentication
     admin
@@ -104,7 +105,7 @@ export const addUser = async (req, res) => {
 
         const response = await userDB.doc(id).create(user);
 
-        const responseNotify = await notify.doc(authID).create(userNotify);
+        const responseNotify = await notifyDB.doc(authID).create(userNotify);
 
         console.log("User Created in fb firestore", user);
         return res
@@ -251,15 +252,6 @@ export const getMaxSensor = async (req, res) => {
 
       console.log(temps);
 
-      /* const data = {
-            "MaxTemp": Math.max(...temps),
-            "MinTemp": Math.min(...temps),
-            "gasSafe": gasSafe,
-            "vibSafe": vibSafe,
-            "soundSafe": soundSafe,
-            "wokerCount": workerCount
-        } */
-
       const data = [
         {
           Title: "Maximum Temperature",
@@ -339,9 +331,31 @@ export const checkAuth = (req, res, next) => {
   }
 };
 
+// Function to notify the workers
+export const notify = async (req, res) => {
+  userDB
+    .get()
+    .then((snapshot) => {
+      snapshot.forEach((doc) => {
+        // const docId = doc.id;
+        let notifySignal = doc.get("notify");
+
+        if (notifySignal == undefined) {
+          userDB.doc(doc.id).update({ notify: true });
+        } else {
+          userDB.doc(doc.id).update({ notify: !notifySignal });
+        }
+      });
+      return res.status(200).send("All workers notified");
+    })
+    .catch((err) => {
+      console.log(err.message);
+      return res.status(404).send("A error occured");
+    });
+};
+
 /* // function to check connection status
 let prevData = {};
-
 // Check that for every 6 seconds
 setInterval(() => {
     userDB.get().then(snapshot => {
@@ -357,7 +371,6 @@ setInterval(() => {
                 // If there is update time field, convert it to js time script and seconds
                 connectedDate = doc.data().updatedAt.toDate().getTime()/1000;
             }
-
             // If the record is not updated for 6 seconds, make not connected
             if(connectedDate - prevData[doc.id] < 1){
                 userDB.doc(doc.id).update({"connectionStatus":"Not_Connected"});
