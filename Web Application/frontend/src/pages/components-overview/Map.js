@@ -263,7 +263,17 @@ const Map = () => {
                                     // key={uuid()}
                                     center={marker.Position}
                                     options={{
-                                        CircleOptions,
+                                        strokeColor: '#FFFFFF',
+                                        strokeOpacity: 0.3,
+                                        strokeWeight: 2,
+                                        fillColor: '#FB00FF',
+                                        fillOpacity: 0.1,
+                                        clickable: false,
+                                        draggable: false,
+                                        editable: false,
+                                        visible: true,
+                                        radius: 5,
+                                        zIndex: 1,
                                         fillColor: colorPicker(marker)
                                     }}
                                     visible={
