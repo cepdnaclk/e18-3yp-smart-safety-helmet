@@ -114,6 +114,9 @@ class _MainScrren extends State<MainScreen> {
     // checkState();
     updateState();
 
+    // Update postion
+    updatePosition();
+
     // Check whether bluetooth device is connected
     if (widget.server.isBonded) {
       setState(() {
@@ -156,7 +159,7 @@ class _MainScrren extends State<MainScreen> {
     // requestLocationAccess();
   }
 
-  // Function t dispose
+  // Function to dispose
   @override
   void dispose() {
     // flag to set is connected
@@ -263,14 +266,14 @@ class _MainScrren extends State<MainScreen> {
   // Function to check and set bluetooth state
   void setBluetoothState() {
     // if device is connected
-    if (widget.server.isBonded) {
+    if (widget.server.isConnected) {
       setState(() {
         bluetoothStatus = true;
       });
     }
 
     // if device is not connected
-    else {
+    if (!widget.server.isConnected) {
       setState(() {
         bluetoothStatus = false;
       });
@@ -699,48 +702,14 @@ class _MainScrren extends State<MainScreen> {
   // This method turn off the buzzer
   void offBuzzer() {
     // Send zero to off the buzzer
+    // notify state about state changes
+    setState(() {
+      _sendMessage("0");
+    });
+
+    // send zero to arduino
     _sendMessage("0");
   }
-
-  // ===================================================== Bluetooth Communication ========================================
-
-  // Function to the navigate to the Bluutoth pairing screen
-  // Implementing navigateto the bluetooth
-  // Future<void> navigateBluetooth(BuildContext context) async {
-  //   // Do the navigation
-  //   final result = await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => const DiscoveryPage()),
-  //   );
-
-  //   // Check themounted property
-  //   if (!mounted) return;
-
-  //   // Set State
-  //   setState(() {
-  //     deviceAddress = result;
-  //   });
-
-  //   // Create a device with that address
-  //   BluetoothDevice device = BluetoothDevice(address: result, name: "Device");
-
-  //   // Setting state of connection state
-  //   // if connectedd
-  //   if (device.isConnected) {
-  //     setState(() {
-  //       bluetoothStatus = true;
-  //     });
-  //   }
-
-  //   // if disconnected
-  //   if (!device.isConnected) {
-  //     setState(() {
-  //       bluetoothStatus = true;
-  //     });
-  //   }
-  // }
-
-  //=======================================================================================================================
 
   // Function to start Stop watch
   void startStopWatch() {
@@ -886,7 +855,7 @@ class _MainScrren extends State<MainScreen> {
     updatePosition();
 
     // get notification
-    getNotifications();
+    getNotifications(widget.userID);
 
     // Create data with sensor details to send to the firebase
     createData(
@@ -1000,9 +969,9 @@ class _MainScrren extends State<MainScreen> {
                   height: 15,
                 ),
                 Icon(
-                  Icons.notification_add_rounded,
-                  color: Colors.yellow,
-                  size: 100,
+                  Icons.safety_check_rounded,
+                  color: Colors.orange,
+                  size: 50,
                 ),
               ],
             ),
@@ -1017,6 +986,15 @@ class _MainScrren extends State<MainScreen> {
                 ),
               ),
               onPressed: () {
+                // Data base refrences
+                final userCollection =
+                    FirebaseFirestore.instance.collection("workers");
+
+                // Set the notification flase obejct
+                Map<String, dynamic> falseData = {'notify': false};
+
+                // Set to the false
+                userCollection.doc(widget.username).update(falseData);
                 setState(() {
                   getNotified = false; // Set State to emergency pressed
                 });
@@ -1036,8 +1014,7 @@ class _MainScrren extends State<MainScreen> {
     // final userDoc =
     //     FirebaseFirestore.instance.collection('safety-notification').doc();
 
-    final userDoc =
-        FirebaseFirestore.instance.collection('safety-notification');
+    final userDoc = FirebaseFirestore.instance.collection('workers');
 
     // Create notification object
     final notification = Notification(name: widget.username);
@@ -1046,7 +1023,7 @@ class _MainScrren extends State<MainScreen> {
     final json = notification.toJSON();
 
     // Send to the cloud firestore
-    await userDoc.doc(userID).update(json);
+    await userDoc.doc(widget.username).update(json);
   }
 
   // Function to send data to the database
@@ -1060,11 +1037,11 @@ class _MainScrren extends State<MainScreen> {
       required String workingTime}) async {
     // Referenec to the collection (AppData)
     // final userDoc = FirebaseFirestore.instance.collection('appdata').doc();
-    final userDoc = FirebaseFirestore.instance.collection('appdata');
+    final userDoc = FirebaseFirestore.instance.collection('workers');
 
     // Create data object
     final data = UserData(
-        id: userDoc.id,
+        id: widget.userID,
         username: username,
         bluetoothStatus: bluetoothStatus,
         noiseStatus: noiseStatus,
@@ -1077,31 +1054,44 @@ class _MainScrren extends State<MainScreen> {
     final jsondata = data.toJSON();
 
     // Update data with existing firebase document
-    await userDoc.doc(userID).update(jsondata);
+    await userDoc.doc(widget.username).update(jsondata);
 
     // Send data to the Cloud Firestore
     // await userDoc.set(jsondata);
   }
 
   // Firebase get realtime notification
-  Future getNotifications() async {
-    // Use firebase instance
-    DatabaseReference database = FirebaseDatabase.instance.ref();
+  Future getNotifications(String userID) async {
+    // Goto firebase firestore
+    final userCollection = FirebaseFirestore.instance.collection("workers");
 
-    // Set the state of notification
-    final snapshot = await database.child('notified').get();
-    if (snapshot.exists) {
-      // ignore: avoid_print
-      print(snapshot.toString());
-    } else {
-      // ignore: avoid_print
-      print('No data available.');
-    }
+    // Get the document from firestore
+    final userDoc = userCollection.doc(widget.username).get().then((value) {
+      Map<String, dynamic> data = value.data()!;
+      // get the value of notify field
+      var notify = data['notify'];
 
-    // Call popup notification
-    if (getNotified) {
-      notifications();
-    }
+      // print the value
+      if (kDebugMode) {
+        print(notify);
+      }
+
+      // popup notifications
+      if (notify == true) {
+        notifications();
+
+        // Set the notification flase obejct
+        Map<String, dynamic> falseData = {'notify': false};
+
+        // Set to the false
+        userCollection.doc(widget.username).update(falseData);
+
+        // set State
+        setState(() {
+          getNotified = true;
+        });
+      }
+    });
   }
 }
 
@@ -1130,12 +1120,12 @@ class UserData {
 
   // Method to create JSON object
   Map<String, dynamic> toJSON() => {
-        'id': id,
+        'user ID': id,
         'name': username,
         'bluetoothStatus': bluetoothStatus,
-        'noiseStatus': noiseStatus,
-        'vibrationStatus': vibrationStatus,
-        'temparature': temparature,
+        'Noice_Level': noiseStatus,
+        'Vibration_Level': vibrationStatus,
+        'Temparature': temparature,
         'working-time': workingTime,
         'date': date,
         'location': position
@@ -1154,5 +1144,5 @@ class Notification {
   Notification({required this.name});
 
   // Convert object into the JSON format
-  Map<String, dynamic> toJSON() => {'name': name, 'date': date};
+  Map<String, dynamic> toJSON() => {'name': name, 'emergency-sent-time': date};
 }
