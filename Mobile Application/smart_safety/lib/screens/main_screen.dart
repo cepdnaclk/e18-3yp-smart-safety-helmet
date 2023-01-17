@@ -11,6 +11,7 @@ import 'package:firebase_database/firebase_database.dart';
 // import 'package:smart_safety/screens/discover_page.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:smart_safety/screens/first_screen.dart';
 
 class MainScreen extends StatefulWidget {
   // Variable to store username
@@ -642,6 +643,31 @@ class _MainScrren extends State<MainScreen> {
                 height: 20,
               ),
 
+              // Buttons for logout and send emergency status to the server
+              // Button for sending emergency to the sever
+              SizedBox(
+                width: 200,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: (() => reconnect()),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                  child: const Text(
+                    'Reconnect',
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Space between two buttons for clarity
+              const SizedBox(
+                height: 20,
+              ),
+
               // buton to stop piexzo buzzer
               SizedBox(
                 width: 200,
@@ -734,6 +760,17 @@ class _MainScrren extends State<MainScreen> {
     if (stopwatch.isRunning) {
       updateWorkingTime(); // Callback the updaing function
     }
+  }
+
+  // method to reconnect
+  void reconnect() {
+    // Handling pairing requests handler
+    flutterBluetoothSerial.setPairingRequestHandler(null);
+
+    // Go to the main
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ConnectingScreen(username: widget.username, userID: widget.userID);
+    }));
   }
 
   // Method to pop up about logout
