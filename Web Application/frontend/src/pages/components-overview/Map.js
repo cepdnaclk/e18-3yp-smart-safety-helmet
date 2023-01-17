@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { GoogleMap, InfoWindowF, MarkerF, useJsApiLoader, Circle, GroundOverlay } from '@react-google-maps/api';
-import { Box, Container } from '@mui/material';
+import { Box, Container, Button, Grid } from '@mui/material';
 import axios from 'axios';
+
+//toast container
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 //import assests
 // import { v4 as uuid } from 'uuid';
@@ -43,7 +47,7 @@ const mapControls = {
     streetViewControl: false,
     rotateControl: false,
     fullscreenControl: false,
-    // zoomControl: false,
+    // zoomControl: false
     scrollWheel: false
 };
 
@@ -97,6 +101,49 @@ const Map = () => {
         navigate('/userstats', {
             state: marker.userName
         });
+    };
+
+    //notify the error
+    const showError = (err) => {
+        toast.error(err, {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+        });
+    };
+
+    const showSuccess = (msg) => {
+        toast.success(msg, {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+        });
+    };
+
+    //notify handle
+    const handleNotify = async () => {
+        try {
+            const result = await axios({
+                baseURL: 'https://us-central1-smart-helmet-74616.cloudfunctions.net/SupervisorHelmet/notify',
+                method: 'GET'
+            });
+
+            // console.log(result);
+            showSuccess(result.data);
+        } catch (err) {
+            // console.log(err);
+            showError(err.message);
+        }
     };
 
     const [time, setTime] = useState({
@@ -169,6 +216,7 @@ const Map = () => {
 
     return isLoaded ? (
         <>
+            <ToastContainer />
             <Box
                 component="main"
                 sx={{
@@ -236,6 +284,19 @@ const Map = () => {
                     </GoogleMap>
                 </Container>
             </Box>
+            <Grid container justifyContent="center">
+                <Box component="main" textAlign="center">
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        sx={{ width: 400 }}
+                        style={{ backgroundColor: '#FF0000' }}
+                        onClick={handleNotify}
+                    >
+                        Notify All
+                    </Button>
+                </Box>
+            </Grid>
         </>
     ) : (
         <></>
