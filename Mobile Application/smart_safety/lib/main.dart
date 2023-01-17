@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_safety/screens/first_screen.dart';
-import 'package:smart_safety/screens/main_screen.dart';
+// import 'package:smart_safety/screens/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -347,6 +347,14 @@ class _Login extends State<Login> {
 
       // get the data from the document
       var userName = doc.get('name');
+
+      // await FirebaseFirestore.instance
+      //     .collection('workers').doc()
+      //     .where('User ID', isEqualTo: userID)
+      //     .get()
+      //     .then((value) {
+      //   print(value.docs);
+      // });
 
       // Update the State
       setState(() {

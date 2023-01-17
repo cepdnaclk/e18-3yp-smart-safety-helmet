@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "594702403369",
-    "project_id": "smart-safety-3yp",
-    "storage_bucket": "smart-safety-3yp.appspot.com"
+    "project_number": "20313702925",
+    "firebase_url": "https://smart-helmet-74616-default-rtdb.firebaseio.com",
+    "project_id": "smart-helmet-74616",
+    "storage_bucket": "smart-helmet-74616.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:594702403369:android:e0b758380500cbab3b5938",
+        "mobilesdk_app_id": "1:20313702925:android:fa2af464f64742a7018b44",
         "android_client_info": {
           "package_name": "com.example.smart_safety"
         }
       },
       "oauth_client": [
         {
-          "client_id": "594702403369-ne1pidelhhtkegovk4678bhr7kviuecq.apps.googleusercontent.com",
+          "client_id": "20313702925-2ep10mj9smghpue1euhdtbsmivhq8m8p.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCQQiSY79dxf1SI1gTNOpbpFewwRqgD2P0"
+          "current_key": "AIzaSyD4ElP4WrIvYPS_4dO0z3TPEXTCYM7LuMg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "594702403369-ne1pidelhhtkegovk4678bhr7kviuecq.apps.googleusercontent.com",
+              "client_id": "20313702925-2ep10mj9smghpue1euhdtbsmivhq8m8p.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
