@@ -14,10 +14,14 @@ const supervisorDB = db.collection("supervisors");
 export const getUser = async (req, res) => {
   try {
     let user = req.params.id;
-    console.log(user);
+    // console.log(user);
 
     await userDB.doc(user).get()
     .then(doc => {
+      console.log(doc.id);
+      if(doc.id === null){
+        return res.status(404).send("User not found");
+      }
       const name = doc.get("name");
       const tempurature = doc.get("Tempurature");
       const vibration = doc.get("Vibration_Level");
@@ -43,12 +47,12 @@ export const getUser = async (req, res) => {
           value: gas,
         },
         {
-          Title: "Name",
-          value: name,
-        },
-        {
           Title: "Working Time",
           value: working
+        },
+        {
+          Title: "Name",
+          value: name,
         }
       ];
 
