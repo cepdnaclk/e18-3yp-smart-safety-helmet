@@ -151,7 +151,7 @@ const Map = () => {
     const handleNotify = async () => {
         try {
             const result = await axios({
-                baseURL: 'https://us-central1-smart-helmet-74616.cloudfunctions.net/SupervisorHelmet/notify',
+                baseURL: `${process.env.REACT_APP_API_URL}/notify`,
                 method: 'GET'
             });
 
@@ -218,8 +218,15 @@ const Map = () => {
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
+
         state.result.forEach(({ Position }) => {
-            bounds.extend(Position);
+            if (Position !== undefined) {
+                const lat = Position.split(',')[0].split(':')[1].split(' ')[1] * 1;
+                const lng = Position.split(',')[1].split(':')[1].split(' ')[1] * 1;
+
+                console.log(lat, lng);
+                bounds.extend({ lat, lng });
+            }
             // map.setCenter(Position);
             // map.setZoom(3);
         });
@@ -261,7 +268,10 @@ const Map = () => {
                             <>
                                 <Circle
                                     // key={uuid()}
-                                    center={marker.Position}
+                                    center={{
+                                        lat: marker.Position.split(',')[0].split(':')[1].split(' ')[1] * 1,
+                                        lng: marker.Position.split(',')[1].split(':')[1].split(' ')[1] * 1
+                                    }}
                                     options={{
                                         strokeColor: '#FFFFFF',
                                         strokeOpacity: 0.3,
@@ -288,7 +298,10 @@ const Map = () => {
                                 {isMounted && (
                                     <MarkerF
                                         key={marker.id != undefined ? marker.id : marker.Name}
-                                        position={marker.Position}
+                                        position={{
+                                            lat: marker.Position.split(',')[0].split(':')[1].split(' ')[1] * 1,
+                                            lng: marker.Position.split(',')[1].split(':')[1].split(' ')[1] * 1
+                                        }}
                                         animation={
                                             marker.Tempurature * 1 > 28 ||
                                             marker.Noice_Level === 'unsafe' ||
