@@ -52,7 +52,7 @@ const ComponentUsers = () => {
         getData();
 
         //just replace the empty array with time to refresh for every 5 seconds
-    }, [time]);
+    }, []);
 
     return (
         <ComponentSkeleton>
