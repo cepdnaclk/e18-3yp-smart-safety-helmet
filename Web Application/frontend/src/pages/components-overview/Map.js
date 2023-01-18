@@ -214,7 +214,7 @@ const Map = () => {
         }
 
         getData();
-    }, []);
+    }, [time]);
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
