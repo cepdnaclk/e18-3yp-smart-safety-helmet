@@ -103,14 +103,14 @@ export const addUser = async (req, res) => {
         };
         console.log(user);
 
-        const response = await userDB.doc(id).create(user);
+        await userDB.doc(id).create(user);
 
-        const responseNotify = await notifyDB.doc(authID).create(userNotify);
+        await notifyDB.doc(authID).create(userNotify);
 
         console.log("User Created in fb firestore", user);
         return res
           .status(200)
-          .send({ DBResponse: response, notifyRes: responseNotify });
+          .send("Success");
       })
       .catch((error) => {
         return res.status(400).send(`Error creating new user: ${error}`);
@@ -147,8 +147,9 @@ export const getSensorData = (req, res) => {
           const location = doc.get("location");
           const conStatus = doc.get("connectionStatus");
 
-          const lat = location.split(",")[0].split(":")[1].split(" ")[1] * 1;
-          const lng = location.split(",")[1].split(":")[1].split(" ")[1] * 1;
+          // const lat = location.split(",")[0].split(":")[1].split(" ")[1] * 1;
+          // const lng = location.split(",")[1].split(":")[1].split(" ")[1] * 1;
+          // const stringLoc = splitString
 
           const data = {
             id: uuid(),
@@ -158,10 +159,7 @@ export const getSensorData = (req, res) => {
             Vibration_Level: vibration,
             Noice_Level: noise,
             Gas_Level: gas,
-            Position: {
-              lat: lat,
-              lng: lng,
-            },
+            Position: location,
             Connection: conStatus,
           };
 
@@ -174,7 +172,7 @@ export const getSensorData = (req, res) => {
       }
     })
     .catch((err) => {
-      return res.send("DataBase Error", err.message);
+      return res.status(404).send(err.message);
     });
 };
 
@@ -210,7 +208,7 @@ export const getlocation = async (req, res) => {
       }
     })
     .catch((err) => {
-      return res.send("DataBase Error", err.message);
+      return res.status(404).send("DataBase Error");
     });
 };
 
@@ -384,5 +382,5 @@ setInterval(() => {
     }).catch(err => {
         console.log(err.message);
     })
-}, 6000); */
+}, 10000); */
 // }
