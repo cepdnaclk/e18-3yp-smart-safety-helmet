@@ -266,36 +266,38 @@ const Map = () => {
                             //     ) : null}
                             // </Marker>
                             <>
-                                <Circle
-                                    // key={uuid()}
-                                    center={{
-                                        lat: marker.Position.split(',')[0].split(':')[1].split(' ')[1] * 1,
-                                        lng: marker.Position.split(',')[1].split(':')[1].split(' ')[1] * 1
-                                    }}
-                                    options={{
-                                        strokeColor: '#FFFFFF',
-                                        strokeOpacity: 0.3,
-                                        strokeWeight: 2,
-                                        fillColor: '#FB00FF',
-                                        fillOpacity: 0.1,
-                                        clickable: false,
-                                        draggable: false,
-                                        editable: false,
-                                        visible: true,
-                                        radius: 5,
-                                        zIndex: 1,
-                                        fillColor: colorPicker(marker)
-                                    }}
-                                    visible={
-                                        marker.Tempurature * 1 > 28 ||
-                                        marker.Noice_Level === 'unsafe' ||
-                                        marker.Gas_Level === 'unsafe' ||
-                                        marker.Vibration_Level === 'unsafe'
-                                            ? true
-                                            : false
-                                    }
-                                ></Circle>
-                                {isMounted && (
+                                {marker.Position !== undefined && (
+                                    <Circle
+                                        // key={uuid()}
+                                        center={{
+                                            lat: marker.Position.split(',')[0].split(':')[1].split(' ')[1] * 1,
+                                            lng: marker.Position.split(',')[1].split(':')[1].split(' ')[1] * 1
+                                        }}
+                                        options={{
+                                            strokeColor: '#FFFFFF',
+                                            strokeOpacity: 0.3,
+                                            strokeWeight: 2,
+                                            fillColor: '#FB00FF',
+                                            fillOpacity: 0.1,
+                                            clickable: false,
+                                            draggable: false,
+                                            editable: false,
+                                            visible: true,
+                                            radius: 5,
+                                            zIndex: 1,
+                                            fillColor: colorPicker(marker)
+                                        }}
+                                        visible={
+                                            marker.Tempurature * 1 > 28 ||
+                                            marker.Noice_Level === 'unsafe' ||
+                                            marker.Gas_Level === 'unsafe' ||
+                                            marker.Vibration_Level === 'unsafe'
+                                                ? true
+                                                : false
+                                        }
+                                    ></Circle>
+                                )}
+                                {isMounted && marker.Position !== undefined && (
                                     <MarkerF
                                         key={marker.id != undefined ? marker.id : marker.Name}
                                         position={{
