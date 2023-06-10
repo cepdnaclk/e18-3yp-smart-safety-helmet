@@ -55,14 +55,31 @@ const CircleOptions = {
     strokeColor: '#FFFFFF',
     strokeOpacity: 0.3,
     strokeWeight: 2,
-    fillColor: '#FF0000',
+    // fillColor: '#FF0000',
+    fillColor: '#FB00FF',
     fillOpacity: 0.1,
     clickable: false,
     draggable: false,
     editable: false,
     visible: true,
-    radius: 10,
+    radius: 5,
     zIndex: 1
+};
+
+const colorPicker = (title) => {
+    if (title.Tempurature * 1 > 28) {
+        //red
+        return '#FF0000';
+    } else if (title.Noice_Level === 'unsafe') {
+        //green
+        return '#00FF00';
+    } else if (title.Gas_Level === 'unsafe') {
+        //blue
+        return '#0000FF';
+    } else if (title.Vibration_Level === 'unsafe') {
+        //violet
+        return '#FB00FF';
+    }
 };
 
 const bounds = {
@@ -134,7 +151,7 @@ const Map = () => {
     const handleNotify = async () => {
         try {
             const result = await axios({
-                baseURL: 'https://us-central1-smart-helmet-74616.cloudfunctions.net/SupervisorHelmet/notify',
+                baseURL: `${process.env.REACT_APP_API_URL}/notify`,
                 method: 'GET'
             });
 
@@ -197,12 +214,19 @@ const Map = () => {
         }
 
         getData();
-    }, []);
+    }, [time]);
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
+
         state.result.forEach(({ Position }) => {
-            bounds.extend(Position);
+            if (Position !== undefined) {
+                const lat = Position.split(',')[0].split(':')[1].split(' ')[1] * 1;
+                const lng = Position.split(',')[1].split(':')[1].split(' ')[1] * 1;
+
+                console.log(lat, lng);
+                bounds.extend({ lat, lng });
+            }
             // map.setCenter(Position);
             // map.setZoom(3);
         });
@@ -242,16 +266,44 @@ const Map = () => {
                             //     ) : null}
                             // </Marker>
                             <>
-                                <Circle
-                                    // key={uuid()}
-                                    center={marker.Position}
-                                    options={CircleOptions}
-                                    visible={marker.Tempurature * 1 > 28 ? true : false}
-                                ></Circle>
-                                {isMounted && (
+                                {marker.Position !== undefined && (
+                                    <Circle
+                                        // key={uuid()}
+                                        center={{
+                                            lat: marker.Position.split(',')[0].split(':')[1].split(' ')[1] * 1,
+                                            lng: marker.Position.split(',')[1].split(':')[1].split(' ')[1] * 1
+                                        }}
+                                        options={{
+                                            strokeColor: '#FFFFFF',
+                                            strokeOpacity: 0.3,
+                                            strokeWeight: 2,
+                                            fillColor: '#FB00FF',
+                                            fillOpacity: 0.1,
+                                            clickable: false,
+                                            draggable: false,
+                                            editable: false,
+                                            visible: true,
+                                            radius: 5,
+                                            zIndex: 1,
+                                            fillColor: colorPicker(marker)
+                                        }}
+                                        visible={
+                                            marker.Tempurature * 1 > 28 ||
+                                            marker.Noice_Level === 'unsafe' ||
+                                            marker.Gas_Level === 'unsafe' ||
+                                            marker.Vibration_Level === 'unsafe'
+                                                ? true
+                                                : false
+                                        }
+                                    ></Circle>
+                                )}
+                                {isMounted && marker.Position !== undefined && (
                                     <MarkerF
                                         key={marker.id != undefined ? marker.id : marker.Name}
-                                        position={marker.Position}
+                                        position={{
+                                            lat: marker.Position.split(',')[0].split(':')[1].split(' ')[1] * 1,
+                                            lng: marker.Position.split(',')[1].split(':')[1].split(' ')[1] * 1
+                                        }}
                                         animation={
                                             marker.Tempurature * 1 > 28 ||
                                             marker.Noice_Level === 'unsafe' ||
