@@ -210,7 +210,7 @@ class _ConnectionScreen extends State<ConnectingScreen> {
             // Button to start working
             SizedBox(
               width: 300,
-              height: 50,
+              height: 80,
               child: ElevatedButton(
                 onPressed: () async {
                   final BluetoothDevice? selectedDevice =
@@ -262,7 +262,7 @@ class _ConnectionScreen extends State<ConnectingScreen> {
                 padding: const EdgeInsets.all(15.0),
                 child: SizedBox(
                   width: 300,
-                  height: 80,
+                  height: 120,
                   // child text
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
