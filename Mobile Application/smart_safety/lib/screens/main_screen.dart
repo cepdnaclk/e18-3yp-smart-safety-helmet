@@ -11,6 +11,7 @@ import 'package:firebase_database/firebase_database.dart';
 // import 'package:smart_safety/screens/discover_page.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:smart_safety/screens/first_screen.dart';
 
 class MainScreen extends StatefulWidget {
   // Variable to store username
@@ -252,7 +253,7 @@ class _MainScrren extends State<MainScreen> {
 
     if (text.isNotEmpty) {
       try {
-        connection!.output.add(Uint8List.fromList(utf8.encode("$text\r\n")));
+        connection!.output.add(Uint8List.fromList(utf8.encode(text)));
         await connection!.output.allSent;
 
         setState(() {});
@@ -266,14 +267,14 @@ class _MainScrren extends State<MainScreen> {
   // Function to check and set bluetooth state
   void setBluetoothState() {
     // if device is connected
-    if (widget.server.isConnected) {
+    if (widget.server.isBonded) {
       setState(() {
         bluetoothStatus = true;
       });
     }
 
     // if device is not connected
-    if (!widget.server.isConnected) {
+    else {
       setState(() {
         bluetoothStatus = false;
       });
@@ -642,6 +643,31 @@ class _MainScrren extends State<MainScreen> {
                 height: 20,
               ),
 
+              // Buttons for logout and send emergency status to the server
+              // Button for sending emergency to the sever
+              SizedBox(
+                width: 200,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: (() => reconnect()),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                  child: const Text(
+                    'Reconnect',
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Space between two buttons for clarity
+              const SizedBox(
+                height: 20,
+              ),
+
               // buton to stop piexzo buzzer
               SizedBox(
                 width: 200,
@@ -706,9 +732,6 @@ class _MainScrren extends State<MainScreen> {
     setState(() {
       _sendMessage("0");
     });
-
-    // send zero to arduino
-    _sendMessage("0");
   }
 
   // Function to start Stop watch
@@ -737,6 +760,17 @@ class _MainScrren extends State<MainScreen> {
     if (stopwatch.isRunning) {
       updateWorkingTime(); // Callback the updaing function
     }
+  }
+
+  // method to reconnect
+  void reconnect() {
+    // Handling pairing requests handler
+    flutterBluetoothSerial.setPairingRequestHandler(null);
+
+    // Go to the main
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ConnectingScreen(username: widget.username, userID: widget.userID);
+    }));
   }
 
   // Method to pop up about logout
@@ -1078,7 +1112,10 @@ class _MainScrren extends State<MainScreen> {
 
       // popup notifications
       if (notify == true) {
+        // Popup notification window
         notifications();
+        // On the piezo buzzer
+        _sendMessage("1");
 
         // Set the notification flase obejct
         Map<String, dynamic> falseData = {'notify': false};
