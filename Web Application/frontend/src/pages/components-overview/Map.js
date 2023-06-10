@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { GoogleMap, InfoWindowF, MarkerF, useJsApiLoader, Circle, GroundOverlay } from '@react-google-maps/api';
-import { Box, Container } from '@mui/material';
+import { Box, Container, Button, Grid } from '@mui/material';
 import axios from 'axios';
+
+//toast container
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 //import assests
 // import { v4 as uuid } from 'uuid';
@@ -43,7 +47,7 @@ const mapControls = {
     streetViewControl: false,
     rotateControl: false,
     fullscreenControl: false,
-    // zoomControl: false,
+    // zoomControl: false
     scrollWheel: false
 };
 
@@ -51,14 +55,31 @@ const CircleOptions = {
     strokeColor: '#FFFFFF',
     strokeOpacity: 0.3,
     strokeWeight: 2,
-    fillColor: '#FF0000',
+    // fillColor: '#FF0000',
+    fillColor: '#FB00FF',
     fillOpacity: 0.1,
     clickable: false,
     draggable: false,
     editable: false,
     visible: true,
-    radius: 10,
+    radius: 5,
     zIndex: 1
+};
+
+const colorPicker = (title) => {
+    if (title.Tempurature * 1 > 28) {
+        //red
+        return '#FF0000';
+    } else if (title.Noice_Level === 'unsafe') {
+        //green
+        return '#00FF00';
+    } else if (title.Gas_Level === 'unsafe') {
+        //blue
+        return '#0000FF';
+    } else if (title.Vibration_Level === 'unsafe') {
+        //violet
+        return '#FB00FF';
+    }
 };
 
 const bounds = {
@@ -97,6 +118,49 @@ const Map = () => {
         navigate('/userstats', {
             state: marker.userName
         });
+    };
+
+    //notify the error
+    const showError = (err) => {
+        toast.error(err, {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+        });
+    };
+
+    const showSuccess = (msg) => {
+        toast.success(msg, {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+        });
+    };
+
+    //notify handle
+    const handleNotify = async () => {
+        try {
+            const result = await axios({
+                baseURL: `${process.env.REACT_APP_API_URL}/notify`,
+                method: 'GET'
+            });
+
+            // console.log(result);
+            showSuccess(result.data);
+        } catch (err) {
+            // console.log(err);
+            showError(err.message);
+        }
     };
 
     const [time, setTime] = useState({
@@ -150,12 +214,19 @@ const Map = () => {
         }
 
         getData();
-    }, []);
+    }, [time]);
 
     const handleOnLoad = (map) => {
         const bounds = new google.maps.LatLngBounds();
+
         state.result.forEach(({ Position }) => {
-            bounds.extend(Position);
+            if (Position !== undefined) {
+                const lat = Position.split(',')[0].split(':')[1].split(' ')[1] * 1;
+                const lng = Position.split(',')[1].split(':')[1].split(' ')[1] * 1;
+
+                console.log(lat, lng);
+                bounds.extend({ lat, lng });
+            }
             // map.setCenter(Position);
             // map.setZoom(3);
         });
@@ -169,6 +240,7 @@ const Map = () => {
 
     return isLoaded ? (
         <>
+            <ToastContainer />
             <Box
                 component="main"
                 sx={{
@@ -194,16 +266,44 @@ const Map = () => {
                             //     ) : null}
                             // </Marker>
                             <>
-                                <Circle
-                                    // key={uuid()}
-                                    center={marker.Position}
-                                    options={CircleOptions}
-                                    visible={marker.Tempurature * 1 > 28 ? true : false}
-                                ></Circle>
-                                {isMounted && (
+                                {marker.Position !== undefined && (
+                                    <Circle
+                                        // key={uuid()}
+                                        center={{
+                                            lat: marker.Position.split(',')[0].split(':')[1].split(' ')[1] * 1,
+                                            lng: marker.Position.split(',')[1].split(':')[1].split(' ')[1] * 1
+                                        }}
+                                        options={{
+                                            strokeColor: '#FFFFFF',
+                                            strokeOpacity: 0.3,
+                                            strokeWeight: 2,
+                                            fillColor: '#FB00FF',
+                                            fillOpacity: 0.1,
+                                            clickable: false,
+                                            draggable: false,
+                                            editable: false,
+                                            visible: true,
+                                            radius: 5,
+                                            zIndex: 1,
+                                            fillColor: colorPicker(marker)
+                                        }}
+                                        visible={
+                                            marker.Tempurature * 1 > 28 ||
+                                            marker.Noice_Level === 'unsafe' ||
+                                            marker.Gas_Level === 'unsafe' ||
+                                            marker.Vibration_Level === 'unsafe'
+                                                ? true
+                                                : false
+                                        }
+                                    ></Circle>
+                                )}
+                                {isMounted && marker.Position !== undefined && (
                                     <MarkerF
                                         key={marker.id != undefined ? marker.id : marker.Name}
-                                        position={marker.Position}
+                                        position={{
+                                            lat: marker.Position.split(',')[0].split(':')[1].split(' ')[1] * 1,
+                                            lng: marker.Position.split(',')[1].split(':')[1].split(' ')[1] * 1
+                                        }}
                                         animation={
                                             marker.Tempurature * 1 > 28 ||
                                             marker.Noice_Level === 'unsafe' ||
@@ -236,6 +336,19 @@ const Map = () => {
                     </GoogleMap>
                 </Container>
             </Box>
+            <Grid container justifyContent="center">
+                <Box component="main" textAlign="center">
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        sx={{ width: 400 }}
+                        style={{ backgroundColor: '#FF0000' }}
+                        onClick={handleNotify}
+                    >
+                        Notify All
+                    </Button>
+                </Box>
+            </Grid>
         </>
     ) : (
         <></>

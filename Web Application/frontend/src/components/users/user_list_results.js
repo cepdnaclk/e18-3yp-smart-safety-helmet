@@ -106,7 +106,7 @@ export const UserListResults = ({ customers, ...rest }) => {
                                         </Box>
                                     </TableCell>
                                     <TableCell sx={{ color: customer.Connection === 'Connected' ? 'green' : 'red' }}>
-                                        {`● ${customer.Connection}`}
+                                        {`● ${customer.Connection !== undefined ? customer.Connection : `Not_Connected`}`}
                                     </TableCell>
                                     {/* <TableCell>{customer.workingTime}</TableCell> */}
                                     <TableCell>{customer.Tempurature}</TableCell>

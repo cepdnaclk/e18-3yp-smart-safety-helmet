@@ -52,7 +52,7 @@ const ComponentUsers = () => {
         getData();
 
         //just replace the empty array with time to refresh for every 5 seconds
-    }, []);
+    }, [time]);
 
     return (
         <ComponentSkeleton>
@@ -75,7 +75,7 @@ const ComponentUsers = () => {
                     </Button>
                 </Box>
             </Box>
-            <Box sx={{ mt: 3 }}>
+            {/* <Box sx={{ mt: 3 }}>
                 <Card>
                     <CardContent>
                         <Box sx={{ maxWidth: 500 }}>
@@ -96,7 +96,7 @@ const ComponentUsers = () => {
                         </Box>
                     </CardContent>
                 </Card>
-            </Box>
+            </Box> */}
             <Box sx={{ mt: 3 }}>
                 <UserListResults customers={state.result} />
             </Box>
